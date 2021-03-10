@@ -1,116 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <!-- <link rel="stylesheet" href="public/styles/style.css"> -->
-    
-</head>
-<style>
-    .conversationTab{
-        margin: 0;
-        /* height: 100vh; */
-        color: #000;
-        /* padding-left:20px ; */
-        
-        
-        
+  </head>
+  <style>
+    .conversationTab {
+      margin: 0;
+      /* height: 100vh; */
+      color: #000;
+      /* padding-left:20px ; */
     }
-    .conversation-header{
-        border-bottom: 1px solid rgb(185, 185, 185);
-        height: 40px;
-        padding: 10px 20px ;
-        font-weight: bold;
-
+    .conversation-header {
+      border-bottom: 1px solid rgb(185, 185, 185);
+      height: 40px;
+      padding: 10px 20px;
+      font-weight: bold;
     }
-    .messagefield{
-        background-color: yellow;
-        
-    }
-    
-    
-    #form>button{
-            position: fixed;
-            bottom: 30px;
-            height: 50px;
-            margin-left: 20px;
-            outline: none;
-            padding: 20px;
-            opacity: 0;
-            
-        }
-    #form>input{
-        position: fixed;
-        bottom: 20px;
-        width: 60%;
-        height: 50px;
-        margin-left: 20px;
-        outline: none;
-        border: 1px solid gray;
-        border-radius: 10px;
-        padding: 20px;
+    .messagefield {
+      border: 1px solid rgb(20, 13, 59);
+      width: 80%;
+      margin: 5px 20px;
     }
 
-.chat-messages{
-    padding-left: 20px;
-    min-height: 360px;
-    max-height: 360px;
-    overflow-y: scroll;
-    /* border: 2px solid red; */
-    
+    #form > button {
+      position: fixed;
+      bottom: 30px;
+      height: 50px;
+      margin-left: 20px;
+      outline: none;
+      padding: 20px;
+      opacity: 0;
+    }
+    #form > input {
+      position: fixed;
+      bottom: 20px;
+      width: 60%;
+      height: 50px;
+      margin-left: 20px;
+      outline: none;
+      border: 1px solid gray;
+      border-radius: 10px;
+      padding: 20px;
+    }
 
-}
-.chat-messages>.message{
-    height: 50px;
-    background-color: rgb(202, 202, 202);
-}
-        
-  
-</style>
-<body>
-    
+    .chat-messages {
+      padding-left: 20px;
+      min-height: 360px;
+      max-height: 360px;
+      overflow-y: scroll;
+      /* border: 2px solid red; */
+    }
+    .chat-messages > .message {
+      height: 50px;
+      background-color: rgb(202, 202, 202);
+    }
+  </style>
+  <body>
     <div class="conversationTab">
-        <div class="conversation-header">
-            <!-- *check first if there are channels in db -->
+      <div class="conversation-header">
 
-         <%# if(!data){ %>  
-              <!-- <p>no channels</p> -->
-          <%#  } %>     
-         
-          <%# else{ %> 
-          
-              <div><%= data[0].channelName %> </div>
-              <div><%= data[0]._id %> </div>
+        <!-- * check if there is any channels in db -->
+        <% if (typeof data !='undefined' ) { %> 
+
+            <%#for (channel of data) { %>
+            <div><%= data[0].channelName %></div>
+            <div><%= data[0]._id %></div>
+
             <%# } %> 
-          
-            
-            
-        </div>
-
-        <div class="messagefield">
-            <form action="/new/message" method="POST" id="form">
-                <input name="newMessage" id="msg" autocomplete="off">
-                <button>send</button>
-            </form>
-        </div>
         
-    <!-- <ul id="messages"></ul> -->
-        <div class="chat-messages">
-            <!-- * new messages will appear  -->
-            
-        </div>
+        <% } %>
+      </div>
 
+      <div class="messagefield">
+
+        <% if (typeof data !='undefined' ) { %> 
+
+            <%for ( let i =0; i < data[0].conversation.length; i++) { %>
+                <div><%= data[0].conversation[i].message %></div>
+
+            <% } %> 
+        
+        <% } %>
+
+
+        
+
+        <form action="/messages/new" method="POST" id="form">
+          <!-- <form id="form"> -->
+          <input name="newMessage" id="msg" autocomplete="off" />
+          <button id="submit-msg">send</button>
+        </form>
+      </div>
+
+      <!-- <ul id="messages"></ul> -->
+      <div class="chat-messages">
+        <!-- * new messages will appear  -->
+      </div>
     </div>
+
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/public/main.js"></script> 
-
-<!-- *________________________________________________________________ -->
-<!-- *________________________________________________________________ -->
-<!-- *________________________________________________________________ -->
-
+    <!-- <script src="/public/main.js"></script>  -->
+    <!-- <script src="/public/scripts/message.js"></script>  -->
+    <!-- 
     <script>
+        document.addEventListener('DOMContentLoaded', e => {
+    document
+        .getElementById('submit-msg')
+        .addEventListener('submit', e => {
+            const conversation = {
+                message: document.getElementById('msg').value
+            }
+
+            fetch('/new/message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(conversation)
+            })
+                .then(response => { })
+                .then(data => {
+                    window.location.href = '/';
+                })
+        })
+})
+    </script> -->
+
+    <!-- *________________________________________________________________ -->
+    <!-- *________________________________________________________________ -->
+    <!-- *________________________________________________________________ -->
+
+    <!-- <script>
 
         let chatform = document.getElementById("form")
         let input = document.getElementById('msg');
@@ -130,8 +154,6 @@
 
             // call func on this message to add to dom 
             outputMessage(message)
-
-
         })
 
 
@@ -178,7 +200,6 @@
         }
 
        
-    </script>     
-    
-</body>
+    </script>      -->
+  </body>
 </html>

@@ -1,58 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
+  </head>
 
-
-
-<body>
-    
+  <body>
     <div class="sidebar">
-          <h2 class="sidebarHeader"> Room Name</h2>
+      <h2 class="sidebarHeader">Room Name</h2>
 
-          <div class="sidebarContent">
-            <h3>Threads</h3>
+      <div class="sidebarContent">
+        <h3>Threads</h3>
 
-            <div class="sidebarSections">
-              <p>All DMS</p>
-              <p>Mentions & reactions</p>
-              <p>Saved items</p>
+        <div class="sidebarSections">
+          <p>All DMS</p>
+          <p>Mentions & reactions</p>
+          <p>Saved items</p>
 
-              <p>Channels</p>
-            <!-- * loop through channel from db -->
+          <p>Channels</p>
+          <!-- * loop through channel from db -->
 
-            <%for(channel of data){ %> 
-                
-                  <div class="channelsDiv">
-                      <a href="/channels/<%=channel._id %>"> <button class="channelButt"># <%=channel.channelName %></button>   </a>
-                      
-                </div>
-            <%} %> 
-              
-
-              <div><button class="channelButt"> Add Channel  </button> </div>
-              
-            </div>
+          <!-- * check if there is any channels in db -->
+          <% if (typeof data !='undefined' ) { %> 
+            
+            <% for (channel of data) { %>
+          <div class="channelsDiv">
+            <a href="/channels/<%=channel._id %>">
+              <button class="channelButt"># <%=channel.channelName %></button>
+            </a>
             
           </div>
 
-          <!-- todo -->
-          <!-- make this pop up when clicked on add channel -->
-
-          <form method="POST" action="/new/channel">
-              <input type="text" name="channelInput" id="">
-              <button>Add Channel</button>
-          </form>
-          
-
-          
+           <% } %>
         
-        
+           <a href="/">back</a>
+
+           
+
+           
+          <% } %> 
+          
+          
+         
+
+          <div><button class="channelButt">Add Channel</button></div>
+        </div>
       </div>
-    
-</body>
+
+      <!-- todo -->
+      <!-- make this pop up when clicked on add channel -->
+
+      <form method="POST" action="/channels/new">
+        <input type="text" name="channelInput" id="" />
+        <button>Add Channel</button>
+      </form>
+    </div>
+  </body>
 </html>

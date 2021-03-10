@@ -12,25 +12,15 @@ const slackSchema = new mongoose.Schema({
             timestamp: {
                 type: Date,
                 default:Date.now
-            }, 
+            }
 
-            user:{
-                name:{
-                    type:String, 
-                    // required:true
-                },
-                email:{
-                    type: String,
-                    // required:true
-                }
-            },
-            userImage:String
+       
         }
     ]
 })
 
 // export default mongoose.model()
 
-module.exports= mongoose.model("Conversation", slackSchema)
+module.exports= mongoose.model("Channel", slackSchema)
 
     
