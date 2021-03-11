@@ -32,7 +32,10 @@ app.use(express.urlencoded({ extended: false }));
 
 // EJS
 app.set("view engine", "ejs");
-app.use(express.static(path.join(__dirname, "public")));
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// app.use(express.static(path.join(__dirname, "public")));
+
 
 // routes
 
@@ -74,7 +77,7 @@ app.post("/channels/new", (req, res) => {
 });
 
 app.get("/channels/:id", async (req, res) => {
-  const id = req.params.id;
+  const {id} = req.params;
   // const channelName= req.body.
   // * we are only showing the channel that we are, should shows all channels on the sidebar
   // * -- remove the filter in find
@@ -91,51 +94,15 @@ app.get("/channels/:id", async (req, res) => {
 });
 
 // push messages to db
-// app.get("/messages/new", (req, res) => {});
-
-
-
-
-
-
-
-
 app.post("/messages/new", (req, res) => {
-  // res.send(" message sent ")
-  const id = req.params.id;
-
-  const newMessage = req.body;
-  console.log(newMessage);
-  console.log(id + "mmmmmmmmmmmmm");
-
-  // * SAVE MESSAGES TO DB
-  channeldb.updateOne({ _id: id }, { $push: { message: newMessage } });
-
-  // res.send("message sent")
-  res.end();
-
-  // channeldb.updateOne({_id:id},{$push:{message:msg}} ,function (err,data) {
-  //     if(err)
-  //     {
-  //         //handle error
-  //     }
-  //     else{
-  //         //handle success
-  //     }
-  // })
-});
-
-
-
-
-// get conversation
+  // const newMessage= req.body.newMessage
+  // console.log(newMessage );
 
 io.on("connection", (socket) => {
+
   console.log("user connected");
   // welcome the user, emits to the single client
   socket.emit("message", "welcome to slack clone");
-
-  // * save message to db
 
   // broacast when user connects, emit to all except the connecting user
   socket.broadcast.emit("message", "a user has joined ");
@@ -146,6 +113,15 @@ io.on("connection", (socket) => {
   socket.on("chatMessage", (msg) => {
     io.emit("message", msg);
 
+ // * save message to db .........................
+//  const id = req.params.id
+  // let chatMessage =  channeldb.updateOne({_id:id}, {$push:{
+  //   conversation:{
+  //     message:msg
+  //   }
+    
+
+  // }})
     // channeldb.updateOne({_id:},{$push:{message:msg}} ,function (err,data) {
     //     if(err)
     //     {
@@ -164,5 +140,47 @@ io.on("connection", (socket) => {
     io.emit("message", " a user disconnected........");
   });
 });
+
+
+});
+
+
+
+app.get("/messages/new", (req, res) => {
+  
+  
+
+  res.send(" message sent ")
+
+
+
+
+
+  // const newMessage = req.body;
+  // console.log(newMessage);
+  // console.log(id + "mmmmmmmmmmmmm");
+
+  // // * SAVE MESSAGES TO DB
+  // channeldb.updateOne({ _id: id }, { $push: { message: newMessage } });
+
+  // res.send("message sent")
+  // res.end();
+
+  // channeldb.updateOne({_id:id},{$push:{message:msg}} ,function (err,data) {
+  //     if(err)
+  //     {
+  //         //handle error
+  //     }
+  //     else{
+  //         //handle success
+  //     }
+  // })
+});
+
+
+
+
+// get conversation
+
 
 server.listen(3001);

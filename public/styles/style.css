@@ -88,3 +88,53 @@ body {
 .channelButt:focus {
   outline: none;
 }
+
+.conversationTab {
+  margin: 0;
+  /* height: 100vh; */
+  color: #000;
+  /* padding-left:20px ; */
+}
+.conversation-header {
+  border-bottom: 1px solid rgb(185, 185, 185);
+  height: 40px;
+  padding: 10px 20px;
+  font-weight: bold;
+}
+.messagefield {
+  border: 1px solid rgb(20, 13, 59);
+  width: 80%;
+  margin: 5px 20px;
+  background-color:transparent ;
+}
+
+#form > button {
+  position: fixed;
+  bottom: 30px;
+  height: 50px;
+  margin-left: 20px;
+  outline: none;
+  padding: 20px;
+  opacity: 0;
+}
+#form > input {
+  position: fixed;
+  bottom: 20px;
+  width: 60%;
+  height: 85px;
+  outline: none;
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+
+.chat-messages {
+  padding-left: 20px;
+  min-height: 200px;
+  max-height: 260px;
+  overflow-y: scroll;
+  /* border: 2px solid red; */
+}
+.chat-messages > .message {
+  height: 50px;
+  background-color: rgb(202, 202, 202);
+}

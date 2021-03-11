@@ -9,18 +9,20 @@ socket.on("message", (message)=>{
     console.log(message + "..........");
 
     //---------------
-    //  save messgae to db
+    // *** save message to db
+
+
+
 
     // call func on this message to add to dom 
     outputMessage(message)
 })
 
-
 // message submit
 chatform.addEventListener("submit", (e) =>{
-    e.preventDefault();
+    // e.preventDefault();
     
-    // // get message text
+    // get message text
     let msg = e.target.elements.msg.value
 
     // // emit message to server

@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', e => {
                 message: document.getElementById('msg').value
             }
 
-            fetch('/new/message', {
+            fetch('/message/new', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

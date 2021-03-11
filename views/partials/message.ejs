@@ -5,60 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <!-- <link rel="stylesheet" href="public/styles/style.css"> -->
+    <link rel="stylesheet" href="public/styles/style.css">
   </head>
-  <style>
-    .conversationTab {
-      margin: 0;
-      /* height: 100vh; */
-      color: #000;
-      /* padding-left:20px ; */
-    }
-    .conversation-header {
-      border-bottom: 1px solid rgb(185, 185, 185);
-      height: 40px;
-      padding: 10px 20px;
-      font-weight: bold;
-    }
-    .messagefield {
-      border: 1px solid rgb(20, 13, 59);
-      width: 80%;
-      margin: 5px 20px;
-    }
-
-    #form > button {
-      position: fixed;
-      bottom: 30px;
-      height: 50px;
-      margin-left: 20px;
-      outline: none;
-      padding: 20px;
-      opacity: 0;
-    }
-    #form > input {
-      position: fixed;
-      bottom: 20px;
-      width: 60%;
-      height: 50px;
-      margin-left: 20px;
-      outline: none;
-      border: 1px solid gray;
-      border-radius: 10px;
-      padding: 20px;
-    }
-
-    .chat-messages {
-      padding-left: 20px;
-      min-height: 360px;
-      max-height: 360px;
-      overflow-y: scroll;
-      /* border: 2px solid red; */
-    }
-    .chat-messages > .message {
-      height: 50px;
-      background-color: rgb(202, 202, 202);
-    }
-  </style>
+  
   <body>
     <div class="conversationTab">
       <div class="conversation-header">
@@ -77,6 +26,7 @@
 
       <div class="messagefield">
 
+        <!-- * get all messages of room  -->
         <% if (typeof data !='undefined' ) { %> 
 
             <%for ( let i =0; i < data[0].conversation.length; i++) { %>
@@ -103,103 +53,8 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <!-- <script src="/public/main.js"></script>  -->
-    <!-- <script src="/public/scripts/message.js"></script>  -->
-    <!-- 
-    <script>
-        document.addEventListener('DOMContentLoaded', e => {
-    document
-        .getElementById('submit-msg')
-        .addEventListener('submit', e => {
-            const conversation = {
-                message: document.getElementById('msg').value
-            }
-
-            fetch('/new/message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(conversation)
-            })
-                .then(response => { })
-                .then(data => {
-                    window.location.href = '/';
-                })
-        })
-})
-    </script> -->
-
-    <!-- *________________________________________________________________ -->
-    <!-- *________________________________________________________________ -->
-    <!-- *________________________________________________________________ -->
-
-    <!-- <script>
-
-        let chatform = document.getElementById("form")
-        let input = document.getElementById('msg');
-        let chatMessages = document.getElementsByClassName('chat-messages');
-
-        const socket = io()
-
-        // message from server
-        socket.on("message", (message)=>{
-            console.log(message + "..........");
-
-            //---------------
-            //  save messgae to db
-            // saveMsgToDb(message)
-
-
-
-            // call func on this message to add to dom 
-            outputMessage(message)
-        })
-
-
-        // message submit
-        // chatform.addEventListener("submit", (e) =>{
-        //     // e.preventDefault();
-            
-        //     // // get message text
-        //     let msg = e.target.elements.msg.value
-
-        //     // // emit message to server
-        //     socket.emit("chatMessage", msg );
-
-        //     // Clear input
-        //     e.target.elements.msg.value = '';
-        //     e.target.elements.msg.focus();
-        // })
-
-        // socket.on("message ", message=>{
-        //     console.log(message);
-        //     let item  = document.createElement("li")
-        //     item.textContent=message
-
-        //     item.style.backgroundColor="red";
-        //     item.style.marginLeft="500px";
-
-
-        //     messages.appendChild(item)
-
-        // })
-
-
-        // output message to dom 
-        function outputMessage(message){
-            const div = document.createElement("div")
-            div.classList.add("message")
-
-            div.innerHTML=`<p class="meta "> abbe <span>9.10pm</span></p>
-            <p class="text">
-                ${message}
-            </p>`
-
-            document.querySelector(".chat-messages").appendChild(div)
-        }
-
-       
-    </script>      -->
+    <script src="/public/scripts/main.js"></script> 
+    <script src="/public/scripts/message.js"></script> 
+    
   </body>
 </html>
