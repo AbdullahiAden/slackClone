@@ -86,82 +86,62 @@ app.get("/channels/:id", async (req, res) => {
   // * GET MESSAGES FROM DB
 });
 
-// app.post("/messages/new", (req, res) => {
-//   // res.send(" message sent ")
-//   const id = req.params.id;
-
-//   const newMessage = req.body;
-//   console.log(newMessage);
-//   console.log(id + "mmmmmmmmmmmmm");
-
-//   // * SAVE MESSAGES TO DB
-// // *****************
-// const chatMessage = channeldb.updateOne( { _id: id }, { $push: { message: {msg} } })
-
-// //  * save message to db .........................
-
-// //  const id = req.params.id
-// //   let chatMessage =  channeldb.updateOne({_id:id}, {$push:{
-// //     conversation:{
-// //       message:msg
-// //     }
-
-// //   }})
-
-//   channeldb.updateOne({ _id: id }, { $push: { message: newMessage } });
-
-//   // res.send("message sent")
-//   res.end();
-
-//   // channeldb.updateOne({_id:id},{$push:{message:msg}} ,function (err,data) {
-//   //     if(err)
-//   //     {
-//   //         //handle error
-//   //     }
-//   //     else{
-//   //         //handle success
-//   //     }
-//   // })
-// });
-
+//*___________________________________________________________________________________________________
+//*___________________________________________________________________________________________________
 io.on("connection", (socket) => {
+
+  // ******************************************************************
+  io.on("chatMessage", async (allMessages) => {
+    // * save message to db before emitting to  the browser
+    // receive an object from client, the channel name and the message that will be sent to to the database
+    let { channel, allMessage } = allMessages;
+
+    console.log(channel);
+    console.log(message);
+
+    // take whatever the user types and save it the db 
+    let channelMessages = await channeldb.findOne({ _id: channel } );
+
+    console.log(channelMessages);
+
+    // emit to the user after saving it
+    socket.emit("outputmsg", messages);
+  });
+// ***********************************************************************
+
   console.log("user connected");
   // socket.emit("message", "welcome to slack clone");
-  // * find the message from db
+  // * find the RIGHT message from db ..................
   channeldb.find().then((messages) => {
     // console.log(messages.conversation);
     // ***** make the channel dynamic, ...... get the the clickd channels messages
-    messages = messages[0].conversation;
+    // messages = messages[0].conversation;
 
     socket.emit("outputmsg", messages);
   });
 
-  // broacast when user connects, emit to all except the connecting user
-  socket.broadcast.emit("message", "a user has joined ");
-
+  
+  
   // * send your message to everyone except you
-  // listen for chatMessage
+  // listen for chatMessage that is sent from client 
   socket.on("chatMessage", async (msg) => {
     // * save message to db before emitting to  the browser
-
+    // receive an object from client, the channel name and the message that will be sent to to the database
     let { channel, message } = msg;
 
     console.log(channel);
     console.log(message);
 
-    let chatMessage = await channeldb.updateOne(
-      { _id: channel },
-      { $push: { conversation: { message: message } } }
-    );
+    // take whatever the user types and save it the db 
+    let chatMessage = await channeldb.updateOne({ _id: channel },{ $push: { conversation: { message: message } } } );
 
-    // console.log(chatMessage);
+    // emit to the user after saving it
     io.emit("message", msg);
   });
 
   // when user disconnects
   socket.on("disconnect", () => {
     console.log("disconnect ");
-
     io.emit("message", " a user disconnected........");
   });
 });
