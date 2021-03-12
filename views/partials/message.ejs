@@ -27,14 +27,14 @@
       <div class="messagefield">
 
         <!-- * get all messages of room  -->
-        <% if (typeof data !='undefined' ) { %> 
+        <%# if (typeof data !='undefined' ) { %> 
 
-            <%for ( let i =0; i < data[0].conversation.length; i++) { %>
-                <div><%= data[0].conversation[i].message %></div>
+            <%#for ( let i =0; i < data[0].conversation.length; i++) { %>
+                <div><%#= data[0].conversation[i].message %></div>
 
-            <% } %> 
+            <%# } %> 
         
-        <% } %>
+        <%# } %>
 
 
         

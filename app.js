@@ -4,12 +4,10 @@ const http = require("http");
 const socketio = require("socket.io");
 
 const mongoose = require("mongoose");
-
-// db connection
-
 const channeldb = require("./models/channel");
-const seed = require("./seed");
+const messagesColl = require("./models/message")
 
+// const seed = require("./seed");
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
@@ -33,10 +31,6 @@ app.use(express.urlencoded({ extended: false }));
 // EJS
 app.set("view engine", "ejs");
 app.use('/public', express.static(path.join(__dirname, 'public')));
-
-// app.use(express.static(path.join(__dirname, "public")));
-
-
 // routes
 
 app.get("/", async (req, res) => {
@@ -144,37 +138,69 @@ app.get("/channels/:id", async (req, res) => {
 io.on("connection", (socket) => {
   console.log("user connected");
   // welcome the user, emits to the single client
-  socket.emit("message", "welcome to slack clone");
+  // socket.emit("message", "welcome to slack clone");
 
-  // * save message to db
+  channeldb.find().then(messages=>{
+    // console.log(messages.conversation);
+    // ***** make the channel dynamic, ...... get the the clickd channels messages
+    messages=messages[0].conversation
+    // for(let message in messages ){
+    //   console.log(`${message}: ${messages[message]} `);
+      
+    // }
+    socket.emit("outputmsg",messages )
+  })
 
   // broacast when user connects, emit to all except the connecting user
   socket.broadcast.emit("message", "a user has joined ");
 
   // * send your message to everyone except you
-
   // listen for chatMessage
-  socket.on("chatMessage", msg => {
+  socket.on("chatMessage", async msg => {
     // * save message to db before emitting to  the browser
- 
 
-    // const chatMessage = channeldb.updateOne( { _id: id }, { $push: { message: {msg} } })
-    // chatMessage.save().then(()=>{
+      let chatMessage = await channeldb.updateOne({_id:"60494383b1ef3018d420ffc5"}, {$push:{
+    conversation:{
+      message:msg
+    }
+    
+
+  }})
+  // console.log(chatMessage);
+    io.emit("message", msg);
+    
+
+    //   chatMessage.save().then(()=>{
     //   // emit this message after saving it
     //   io.emit("message", msg);
     // })
 
+    // const newMessage =channeldb.updateOne({_id:"60494383b1ef3018d420ffc5"},{$push:{
+    //   message:msg}});
 
+    // console.log(newMessage);
+    // if there is channel written
+    // if (newMessage) {
+    //   newMessage.save().then(()=>{
+    //   // emit this message after saving it
+    //   io.emit("message", msg);
+    // })
+    // }
     
-    io.emit("message", msg);
+    // io.emit("message", msg);
 
-    // channeldb.updateOne({_id:},{$push:{message:msg}} ,function (err,data) {
+    // const newMessage= channeldb.updateOne({_id:"60494383b1ef3018d420ffc5"},{$push:{message:msg}} ,function (err,data) {
     //     if(err)
     //     {
-    //         //handle error
+    //         throw err
     //     }
     //     else{
     //         //handle success
+    //         newMessage.save().then(()=>{
+    //           // emit this message after saving it
+    //           io.emit("message", msg);
+    //         })
+
     //     }
     // })
   });
