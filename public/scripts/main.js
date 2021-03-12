@@ -33,7 +33,7 @@ socket.on("outputmsg", (messages) => {
 // socket.emit("message", { channel: channelId, message: msg });
 socket.on("message", (message) => {
   // socket.on("message", ({ channel: channelId, message: message }) => {
-  console.log(message + "..........");
+  console.log(message);
   // call func on this message to add to dom -- emit the message, message.message will emit the content not the object
 
   outputMessage(message.message);

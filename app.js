@@ -56,6 +56,7 @@ app.get("/", async (req, res) => {
   // }
 });
 
+
 // handle channnel creation
 app.post("/channels/new", (req, res) => {
   const channelName = req.body.channelInput;
@@ -81,10 +82,20 @@ app.get("/channels/:id", async (req, res) => {
     }
     res.render("home", { data });
   });
-  // res.redirect("/")
-
-  // * GET MESSAGES FROM DB
 });
+
+app.get("/api/channels", async (req, res) => {
+  await channeldb.find({}, (err, data) => {
+    if (err) {
+     throw(err);
+    }
+    res.json(data);
+
+
+  });
+});
+
+
 
 //*___________________________________________________________________________________________________
 //*___________________________________________________________________________________________________
@@ -145,5 +156,7 @@ io.on("connection", (socket) => {
     io.emit("message", " a user disconnected........");
   });
 });
+
+
 
 server.listen(3001);
