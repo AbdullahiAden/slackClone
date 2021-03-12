@@ -17,7 +17,7 @@
 
             <%#for (channel of data) { %>
             <div><%= data[0].channelName %></div>
-            <div><%= data[0]._id %></div>
+            <div id="channelId"><%= data[0]._id %></div>
 
             <%# } %> 
         
@@ -30,7 +30,7 @@
         <%# if (typeof data !='undefined' ) { %> 
 
             <%#for ( let i =0; i < data[0].conversation.length; i++) { %>
-                <div><%#= data[0].conversation[i].message %></div>
+                <!-- <div><%#= data[0].conversation[i].message %></div> -->
 
             <%# } %> 
         
