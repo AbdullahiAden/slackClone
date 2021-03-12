@@ -110,11 +110,12 @@ body {
 
 #form > button {
   position: fixed;
-  bottom: 30px;
-  height: 50px;
+  right: 10px;
+  bottom: 10px;
+  /* height: 50px; */
   margin-left: 20px;
   outline: none;
-  padding: 20px;
+  /* padding: 20px; */
   opacity: 0;
 }
 #form > input {

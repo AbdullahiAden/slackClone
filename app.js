@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 // db connection
 
 const channeldb = require("./models/channel");
-const connect = require("./seed");
+const seed = require("./seed");
 
 const app = express();
 const server = http.createServer(app);
@@ -93,16 +93,60 @@ app.get("/channels/:id", async (req, res) => {
   // * GET MESSAGES FROM DB
 });
 
-// push messages to db
-app.post("/messages/new", (req, res) => {
-  // const newMessage= req.body.newMessage
-  // console.log(newMessage );
+
+// app.post("/messages/new", (req, res) => {
+//   // res.send(" message sent ")
+//   const id = req.params.id;
+
+//   const newMessage = req.body;
+//   console.log(newMessage);
+//   console.log(id + "mmmmmmmmmmmmm");
+
+//   // * SAVE MESSAGES TO DB
+// // *****************
+// const chatMessage = channeldb.updateOne( { _id: id }, { $push: { message: {msg} } })
+
+// //  * save message to db .........................
+
+
+// //  const id = req.params.id
+// //   let chatMessage =  channeldb.updateOne({_id:id}, {$push:{
+// //     conversation:{
+// //       message:msg
+// //     }
+    
+
+// //   }})
+
+
+
+//   channeldb.updateOne({ _id: id }, { $push: { message: newMessage } });
+
+//   // res.send("message sent")
+//   res.end();
+
+//   // channeldb.updateOne({_id:id},{$push:{message:msg}} ,function (err,data) {
+//   //     if(err)
+//   //     {
+//   //         //handle error
+//   //     }
+//   //     else{
+//   //         //handle success
+//   //     }
+//   // })
+// });
+
+
+
+
+// get conversation
 
 io.on("connection", (socket) => {
-
   console.log("user connected");
   // welcome the user, emits to the single client
   socket.emit("message", "welcome to slack clone");
+
+  // * save message to db
 
   // broacast when user connects, emit to all except the connecting user
   socket.broadcast.emit("message", "a user has joined ");
@@ -110,18 +154,20 @@ io.on("connection", (socket) => {
   // * send your message to everyone except you
 
   // listen for chatMessage
-  socket.on("chatMessage", (msg) => {
+  socket.on("chatMessage", msg => {
+    // * save message to db before emitting to  the browser
+ 
+
+    // const chatMessage = channeldb.updateOne( { _id: id }, { $push: { message: {msg} } })
+    // chatMessage.save().then(()=>{
+    //   // emit this message after saving it
+    //   io.emit("message", msg);
+    // })
+
+
+    
     io.emit("message", msg);
 
- // * save message to db .........................
-//  const id = req.params.id
-  // let chatMessage =  channeldb.updateOne({_id:id}, {$push:{
-  //   conversation:{
-  //     message:msg
-  //   }
-    
-
-  // }})
     // channeldb.updateOne({_id:},{$push:{message:msg}} ,function (err,data) {
     //     if(err)
     //     {
@@ -140,47 +186,5 @@ io.on("connection", (socket) => {
     io.emit("message", " a user disconnected........");
   });
 });
-
-
-});
-
-
-
-app.get("/messages/new", (req, res) => {
-  
-  
-
-  res.send(" message sent ")
-
-
-
-
-
-  // const newMessage = req.body;
-  // console.log(newMessage);
-  // console.log(id + "mmmmmmmmmmmmm");
-
-  // // * SAVE MESSAGES TO DB
-  // channeldb.updateOne({ _id: id }, { $push: { message: newMessage } });
-
-  // res.send("message sent")
-  // res.end();
-
-  // channeldb.updateOne({_id:id},{$push:{message:msg}} ,function (err,data) {
-  //     if(err)
-  //     {
-  //         //handle error
-  //     }
-  //     else{
-  //         //handle success
-  //     }
-  // })
-});
-
-
-
-
-// get conversation
-
 
 server.listen(3001);
