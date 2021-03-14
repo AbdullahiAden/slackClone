@@ -8,20 +8,14 @@ const mongoose = require("mongoose");
 
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-
-
 const flash = require("connect-flash");
 const session = require("express-session");
 
 const channeldb = require("./models/channel");
 const Usersdb = require("./models/user");
-
 const server = http.createServer(app);
 const io = socketio(server);
-
-require("./config/passport")("passport")
-
-
+require("./config/passport")(passport)
 //  db config
 mongoose
   .connect("mongodb://localhost:27017/channel", {
@@ -41,20 +35,15 @@ app.use(express.urlencoded({ extended: false }));
 // EJS
 app.set("view engine", "ejs");
 app.use("/public", express.static(path.join(__dirname, "public")));
-
-
 // Sessions
 app.use(session({
   secret: 'secret',
   resave: true,
   saveUninitialized: true
 }))
-
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
-
-
 
 // connect Flash
 app.use(flash())
@@ -127,7 +116,7 @@ app.get("/user/login", (req, res) => {
   
 });
 
-app.post("/user/login", (req, res)=>{
+app.post("/user/login", (req, res,next)=>{
   passport.authenticate('local', {
     successRedirect: '/channels',
     failureRedirect: '/user/login',
