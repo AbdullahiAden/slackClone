@@ -1,7 +1,7 @@
 html,
 body {
   font-family: Slack-Lato, appleLogo, sans-serif;
-  color: white;
+  color: black;
   margin: 0;
   height: 100%;
 }
@@ -45,6 +45,7 @@ body {
   background-color: #350d36;
   min-height: 100vh;
   height: 100vh;
+  color: white;
 }
 
 .sidebarHeader {
@@ -102,7 +103,6 @@ body {
   font-weight: bold;
 }
 .messagefield {
-  border: 1px solid rgb(20, 13, 59);
   width: 80%;
   margin: 5px 20px;
   background-color:transparent ;
@@ -143,4 +143,9 @@ body {
 /* hide the id  */
 #channelId{
   opacity: 0;
+}
+
+#registerForm{
+  width: 300px;
+  margin: 50px auto;
 }

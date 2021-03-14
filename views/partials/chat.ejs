@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="public/styles/style.css">
+    <!-- <link rel="stylesheet" href="public/styles/style.css"> -->
   </head>
   
   <body>
@@ -26,19 +26,6 @@
 
       <div class="messagefield">
 
-        <!-- * get all messages of room  -->
-        <%# if (typeof data !='undefined' ) { %> 
-
-            <%#for ( let i =0; i < data[0].conversation.length; i++) { %>
-                <!-- <div><%#= data[0].conversation[i].message %></div> -->
-
-            <%# } %> 
-        
-        <%# } %>
-
-
-        
-
         <form action="/messages/new" method="POST" id="form">
           <!-- <form id="form"> -->
           <input name="newMessage" id="msg" autocomplete="off" />
@@ -46,7 +33,6 @@
         </form>
       </div>
 
-      <!-- <ul id="messages"></ul> -->
       <div class="chat-messages">
         <!-- * new messages will appear  -->
       </div>

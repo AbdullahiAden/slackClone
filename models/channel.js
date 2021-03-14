@@ -1,5 +1,7 @@
 const mongoose = require("mongoose")
 
+const Schema = mongoose.Schema;
+
 const slackSchema = new mongoose.Schema({
 
     channelName: String,
@@ -13,6 +15,14 @@ const slackSchema = new mongoose.Schema({
                 type: Date,
                 default:Date.now
             }
+            // ,
+
+            // // * user id 
+            // user:{
+            //     type:Schema.Types.ObjectId, ref:"Users"
+
+            // }
+            
 
        
         }
