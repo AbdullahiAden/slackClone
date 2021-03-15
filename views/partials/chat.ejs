@@ -15,11 +15,11 @@
         <!-- * check if there is any channels in db -->
         <% if (typeof data !='undefined' ) { %> 
 
-            <%#for (channel of data) { %>
+            <%for (channel of data) { %>
             <div><%= data[0].channelName %></div>
             <div id="channelId"><%= data[0]._id %></div>
 
-            <%# } %> 
+            <% } %> 
         
         <% } %>
       </div>

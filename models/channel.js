@@ -14,14 +14,11 @@ const slackSchema = new mongoose.Schema({
             timestamp: {
                 type: Date,
                 default:Date.now
+            },
+            
+            user:{type: Schema.Types.ObjectId, ref:"Users", required: true
+
             }
-            // ,
-
-            // // * user id 
-            // user:{
-            //     type:Schema.Types.ObjectId, ref:"Users"
-
-            // }
             
 
        

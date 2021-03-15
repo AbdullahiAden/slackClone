@@ -2,8 +2,13 @@ let chatform = document.getElementById("form");
 let input = document.getElementById("msg");
 let chatMessages = document.getElementsByClassName("chat-messages");
 
+
 // get the channels id from the the coversation header of the message field
 let channelId = document.getElementById("channelId").textContent;
+
+let userName = document.getElementById('userName');
+let userId = document.getElementById('userId').textContent;
+
 
 const socket = io();
 // * fetched messages........
@@ -46,8 +51,10 @@ chatform.addEventListener("submit", (e) => {
   let msg = e.target.elements.msg.value;
 
   //  emit message to server
-  //send an object to the server, the channel and the message that is typed
-  socket.emit("chatMessage", { channel: channelId, message: msg });
+  // * send an object to the server, the channel and the message that is typed
+
+  socket.emit("chatMessage", { channel: channelId, message: msg , user : userId});
+
   // Clear input
   e.target.elements.msg.value = "";
   e.target.elements.msg.focus();

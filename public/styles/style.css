@@ -46,6 +46,7 @@ body {
   min-height: 100vh;
   height: 100vh;
   color: white;
+  overflow-y: scroll;
 }
 
 .sidebarHeader {
@@ -57,9 +58,11 @@ body {
 
 .sidebarContent {
   padding-left: 1rem;
+  
 }
 .sidebarSections {
   opacity: 70%;
+  
 }
 
 /* ___________________________________________________________ */

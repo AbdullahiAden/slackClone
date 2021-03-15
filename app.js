@@ -13,6 +13,11 @@ const session = require("express-session");
 
 const channeldb = require("./models/channel");
 const Usersdb = require("./models/user");
+
+// const seed = require("./seed")
+
+const { ensureAuthenticated } = require('./config/auth');
+
 const server = http.createServer(app);
 const io = socketio(server);
 require("./config/passport")(passport)
@@ -23,7 +28,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    // console.log("Connection Open ");
+    console.log("Connection Open ");
   })
   .catch((err) => {
     console.log("Erorrr");
@@ -56,7 +61,7 @@ app.use((req, res, next) => {
     next()
 })
 
-// routes
+// ------ ROUTES ----------
 
 // * REGISTER
 app.get("/", async (req, res) => {
@@ -124,12 +129,12 @@ app.post("/user/login", (req, res,next)=>{
   })(req, res, next);
 })
 
-app.get("/channels", async (req, res) => {
-  // res.render("signup")
+app.get("/channels", ensureAuthenticated, async (req, res) => {
 
+  // console.log(req.user);
   await channeldb.find({}, (err, data) => {
     if (channeldb) {
-      res.render("home", { data });
+      res.render("home", { data , user:req.user});
     } else {
       console.log(err);
     }
@@ -146,7 +151,7 @@ app.post("/channels/new", (req, res) => {
   if (channelName) {
     newChannel.save();
   }
-  res.redirect("/");
+  res.redirect("/channels");
 });
 
 app.get("/channels/:id", async (req, res) => {
@@ -159,11 +164,11 @@ app.get("/channels/:id", async (req, res) => {
     if (err) {
       console.log(err);
     }
-    res.render("home", { data });
+    res.render("home", { data, user:req.user });
   });
 });
 
-// json
+//serves json
 app.get("/api/channels", async (req, res) => {
   await channeldb.find({}, (err, data) => {
     if (err) {
@@ -174,52 +179,43 @@ app.get("/api/channels", async (req, res) => {
 });
 
 //*___________________________________________________________________________________________________
-//*___________________________________________________________________________________________________
+
 io.on("connection", (socket) => {
-  io.on("chatMessage", async (allMessages) => {
-    // * save message to db before emitting to  the browser
-    // receive an object from client, the channel name and the message that will be sent to to the database
-    let { channel, allMessage } = allMessages;
-
-    console.log(channel);
-    console.log(message);
-
-    // take whatever the user types and save it the db
-    let channelMessages = await channeldb.findOne({ _id: channel });
-
-    console.log(channelMessages);
-
-    // emit to the user after saving it
-    socket.emit("outputmsg", messages);
-  });
-  // ***********************************************************************
-
-  console.log("user connected");
-  // socket.emit("message", "welcome to slack clone");
-  // * find the RIGHT message from db ..................
+ 
+  // console.log("user connected");
+  // find all RIGHT message from db and send to frontend, there will checked 
   channeldb.find().then((messages) => {
-    // console.log(messages.conversation);
-    // ***** make the channel dynamic, ...... get the the clickd channels messages
-    // messages = messages[0].conversation;
-
     socket.emit("outputmsg", messages);
   });
 
-  // * send your message to everyone except you
-  // listen for chatMessage that is sent from client
+  // send your message to everyone except you -- listen for chatMessage that is sent from client
   socket.on("chatMessage", async (msg) => {
     // * save message to db before emitting to  the browser
     // receive an object from client, the channel name and the message that will be sent to to the database
-    let { channel, message } = msg;
+    let { channel, message ,user } = msg;
 
     console.log(channel);
-    console.log(message);
+    console.log( message);
+    console.log(user);
 
-    // take whatever the user types and save it the db
+    // trim to remove space from the string
+   let trimmedUser=  user.trim()
+
+    // * take whatever the user types and save it the db
     let chatMessage = await channeldb.updateOne(
       { _id: channel },
-      { $push: { conversation: { message: message } } }
-    );
+      { $push: { conversation:[ { message: message , user:trimmedUser}] } }
+    )
+
+      // * populate user in channels 
+  // const theChannel = await channeldb.findById({_id : channel}).then(c=> console.log(c))
+//   const theUser =  await Usersdb.findById({_id : user}).then(res=>{
+//     console.log(res);
+// }).catch(e=>{
+//     console.log(e);
+// })
+  // theChannel.user.push(theUser)
+    // .populate("user").then(console.log(channeldb)) 
 
     // emit to the user after saving it
     io.emit("message", msg);
