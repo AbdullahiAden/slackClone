@@ -133,12 +133,25 @@ app.get("/channels", ensureAuthenticated, async (req, res) => {
 
   // console.log(req.user);
   await channeldb.find({}, (err, data) => {
+
     if (channeldb) {
-      res.render("home", { data , user:req.user});
+
+      Usersdb.find({}, (err, allUsers)=>{
+        res.render("home", { data , user:req.user , allUsers});
+        
+    })
+      
     } else {
       console.log(err);
     }
+    
+
+      
+
   });
+
+
+
 });
 
 // handle channnel creation

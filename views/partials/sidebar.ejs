@@ -46,7 +46,7 @@
           <button>Add Channel</button>
         </form>
         
-        <!-- * dms -->
+        <!--  logged in user -->
         <% if (typeof user !='undefined' ) { %> 
 
          <p id="userName"><%= user.name %> </p>
@@ -55,6 +55,20 @@
       <% } %>
 
           <div>Direct messages</div>
+
+          <!-- all users in db under direct messages -->
+          <% if (typeof user !='undefined' ) { %> 
+            <% for( let users of allUsers){%>
+
+              <p id="users"><%= users.name %> </p>
+            <%} %> 
+            
+
+            
+         
+         <% } %>
+
+
           
 
         </div>
