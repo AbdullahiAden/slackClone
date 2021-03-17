@@ -13,6 +13,7 @@ const socket = io();
 // * fetched messages........
 socket.on("outputmsg", (messages) => {
   console.log(messages);
+
   //  loop through the channels in our db, match channelId from message header(which is hidden)
   // get the appropriate channel and its messages and output to the dom
 
@@ -38,8 +39,8 @@ socket.on("outputmsg", (messages) => {
 socket.on("message", (message) => {
   // socket.on("message", ({ channel: channelId, message: message }) => {
   console.log(message);
-  // call func on this message to add to dom -- emit the message, message.message will emit the content not the object
 
+  // call func on this message to add to dom -- emit the message, message.message will emit the content not the object
   outputMessage(message.message);
 
  
@@ -61,18 +62,19 @@ chatform.addEventListener("submit", (e) => {
   e.target.elements.msg.focus();
 });
 
-// output message to dom
-function outputMessage(message) {
-  const div = document.createElement("div");
-  div.classList.add("message");
+// output database messages to dom
+// function outputMessage(message) {
+//   const div = document.createElement("div");
+//   div.classList.add("message");
 
-  div.innerHTML = `<p class="meta "> abbe <span>9.10pm</span></p>
-    <p class="text">
-        ${message}
-    </p>`;
-  document.querySelector(".chat-messages").appendChild(div);
-}
+//   div.innerHTML = `<p class="meta "> abbe <span>9.10pm</span></p>
+//     <p class="text">
+//         ${message}
+//     </p>`;
+//   document.querySelector(".chat-messages").appendChild(div);
+// }
 
+// output typed message to dom
 function outputMessage(currentmessages) {
   const div = document.createElement("div");
   div.classList.add("message");

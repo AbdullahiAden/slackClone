@@ -47,7 +47,7 @@
           <div class="loggedUser">
             <img src="/uploads/<%=user.profilePic %> "alt="Avatar"class="avatar"/>
             
-            <p class="users" id="userName"><%= user.name %></p>
+            <div class="users" id="userName"><%= user.name %></div>
           </div>
 
           <p id="userId"><%= user._id %></p>
@@ -56,21 +56,18 @@
           <div>Direct messages</div>
 
           <!-- all users in db under direct messages -->
-          <% if (typeof allUsers !='undefined' ) { %> <% for( let users of
-          allUsers){%>
+          <% if (typeof allUsers !='undefined' ) { %> 
+            <% for( let users of allUsers){%>
 
-            <div class="loggedUser">
-             <%if(users.profilePic < 0){%> 
-              <button class="users"><%= users.name %></button>
-            <%} %>
-            
-            <img src="/uploads/<%=users.profilePic %> "alt="Avatar"class="avatar"/>
-            <button class="users">  <%= users.name %></button>
+              <div class="loggedUser">
               
-            </div>
-
-          <p></p>
-          <%} %> <% } %>
+              
+              <img src="/uploads/<%=users.profilePic %> "alt=""class="avatar"/>
+              <a href="/dm/<%= users.id %>" class="channelButt"><button class="users">  <%= users.name %></button></a>
+              
+              </div>
+            <%} %> 
+          <% } %>
         </div>
       </div>
 

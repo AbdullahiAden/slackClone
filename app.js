@@ -138,9 +138,10 @@ app.post("/user/login", (req, res, next) => {
   })(req, res, next);
 });
 
+//* :::::::::::::::::::::::: POPULATE   :::::::::::::::::::::::::::::::::::::::::::::::
 app.get("/channels", ensureAuthenticated, async (req, res) => {
   // console.log(req.user);
-  await channeldb.find({}, (err, data) => {
+  let ALL= await channeldb.find({}, (err, data) => {
     if (channeldb) {
       Usersdb.find({}, (err, allUsers) => {
         if (Usersdb) {
@@ -152,6 +153,12 @@ app.get("/channels", ensureAuthenticated, async (req, res) => {
     } else {
       console.log(err);
     }
+  }).populate("user");
+  console.log("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLl");
+  ALL.forEach(el => {
+   let pop= el.populate("user")
+   console.log(pop);
+    
   });
 });
 
@@ -173,14 +180,26 @@ app.get("/channels/:id", async (req, res) => {
   // const channelName= req.body.
   // * we are only showing the channel that we are, should shows all channels on the sidebar
   // * -- remove the filter in find
-
-  await channeldb.find({ _id: id }, (err, data) => {
+   let currentChannel = await channeldb.find({ _id: id }, (err, data) => {
     if (err) {
       console.log(err);
     }
+    // console.log("____DATA____");
     res.render("home", { data, user: req.user });
-  });
+  })
+  .populate("user", "name")
+  console.log("____---------____");
+  
+  
+  // console.log(currentChannel);
+
 });
+
+
+app.get("/dm/:id",(req,res)=>{
+  const {id} = req.params
+  res.send(id)
+})
 
 //serves json
 app.get("/api/channels", async (req, res) => {
@@ -202,7 +221,7 @@ app.post("/profile/upload", async (req, res) => {
     if (req.files) {
       let profile_pic = req.files.profile_pic;
 
-      console.log(profile_pic);
+      // console.log(profile_pic);
 
       let file_name = `./uploads/${profile_pic.name}`;
 
