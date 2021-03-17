@@ -9,8 +9,7 @@
 
   <body>
     <div class="sidebar">
-      <h2 class="sidebarHeader">Room Name</h2>
-      
+      <h2 class="sidebarHeader"> Workspace</h2>
 
       <div class="sidebarContent">
         <h3>Threads</h3>
@@ -21,67 +20,62 @@
           <p>Saved items</p>
 
           <p>Channels</p>
+
+          <a href="/channels">back</a>
           <!-- * loop through channel from db -->
 
           <!-- * check if there is any channels in db -->
-          <% if (typeof data !='undefined' ) { %> 
-            
-            <% for (channel of data) { %>
+          <% if (typeof data !='undefined' ) { %> <% for (channel of data) { %>
           <div class="channelsDiv">
             <a href="/channels/<%=channel._id %>">
               <button class="channelButt"># <%=channel.channelName %></button>
             </a>
-            
           </div>
 
-           <% } %>
-           <a href="/channels">back</a>
+          <% } %> <% } %>
 
-          <% } %> 
-          
           <div><button class="channelButt">Add Channel</button></div>
 
-        <form method="POST" action="/channels/new">
-          <input type="text" name="channelInput" id="" />
-          <button>Add Channel</button>
-        </form>
-        
-        <!--  logged in user -->
-        <% if (typeof user !='undefined' ) { %> 
+          <form method="POST" action="/channels/new">
+            <input type="text" name="channelInput" id="" />
+            <button>Add Channel</button>
+          </form>
 
-         <p id="userName"><%= user.name %> </p>
-          <p id="userId"><%= user._id %> </p>
-      
-      <% } %>
+          <!--  logged in user -->
+
+          <% if (typeof user !='undefined' ) { %>
+          <div class="loggedUser">
+            <img src="/uploads/<%=user.profilePic %> "alt="Avatar"class="avatar"/>
+            
+            <p class="users" id="userName"><%= user.name %></p>
+          </div>
+
+          <p id="userId"><%= user._id %></p>
+          <% } %>
 
           <div>Direct messages</div>
 
           <!-- all users in db under direct messages -->
-          <% if (typeof user !='undefined' ) { %> 
-            <% for( let users of allUsers){%>
+          <% if (typeof allUsers !='undefined' ) { %> <% for( let users of
+          allUsers){%>
 
-              <p id="users"><%= users.name %> </p>
-            <%} %> 
+            <div class="loggedUser">
+             <%if(users.profilePic < 0){%> 
+              <button class="users"><%= users.name %></button>
+            <%} %>
             
+            <img src="/uploads/<%=users.profilePic %> "alt="Avatar"class="avatar"/>
+            <button class="users">  <%= users.name %></button>
+              
+            </div>
 
-            
-         
-         <% } %>
-
-
-          
-
+          <p></p>
+          <%} %> <% } %>
         </div>
-        
-         
       </div>
 
       <!-- todo -->
       <!-- make this pop up when clicked on add channel -->
-
-      
-
-
     </div>
   </body>
 </html>

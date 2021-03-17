@@ -1,6 +1,5 @@
 let chatform = document.getElementById("form");
 let input = document.getElementById("msg");
-let chatMessages = document.getElementsByClassName("chat-messages");
 
 
 // get the channels id from the the coversation header of the message field
@@ -20,7 +19,7 @@ socket.on("outputmsg", (messages) => {
   for (let message in messages) {
     let msgIds = messages[message]._id;
     let currentChannelMsgs = messages[message].conversation;
-    // console.log(msgIds);
+    console.log(msgIds);
 
     if (channelId === msgIds) {
       console.log(currentChannelMsgs);
@@ -42,6 +41,8 @@ socket.on("message", (message) => {
   // call func on this message to add to dom -- emit the message, message.message will emit the content not the object
 
   outputMessage(message.message);
+
+ 
 });
 
 // message submit
@@ -76,7 +77,7 @@ function outputMessage(currentmessages) {
   const div = document.createElement("div");
   div.classList.add("message");
 
-  div.innerHTML = `<p class="meta "> abbe <span>9.10pm</span></p>
+  div.innerHTML = `<p class="meta "> ${userName.textContent} <span>9.10pm</span></p>
     <p class="text">
         ${currentmessages}
     </p>`;

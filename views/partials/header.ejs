@@ -10,10 +10,25 @@
 <body>
     <div class="headerSearch">
         <input type="text" placeholder="Search Room">
+        <a href="/profile/upload">add profile pic</a>
     </div>
 
+
+    <% if (typeof user !='undefined' ) { %>
+        <%if(user.profilePic <0 ){%> 
+        <a href="/profile/upload"><img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png" alt="Avatar" class="avatar"></a>
+        
+    <%} %>
+    <img src="/uploads/<%=user.profilePic %> "alt="Avatar"class="avatar"/>
+        
+    <% } %>
+
+    
+    
+        
     <div>
-        <img src="https://images.unsplash.com/photo-1584891800774-6f8c93265d8a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="Avatar" class="avatar">
+        
+        
     </div>
     
 </body>
