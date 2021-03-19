@@ -79,7 +79,7 @@ function outputMessage(currentmessages) {
   const div = document.createElement("div");
   div.classList.add("message");
 
-  div.innerHTML = `<p class="meta "> ${userName.textContent} <span>9.10pm</span></p>
+  div.innerHTML = `<p class="meta "> USER <span>9.00 pm </span></p>
     <p class="text">
         ${currentmessages}
     </p>`;

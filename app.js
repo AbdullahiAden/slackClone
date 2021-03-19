@@ -154,12 +154,7 @@ app.get("/channels", ensureAuthenticated, async (req, res) => {
       console.log(err);
     }
   }).populate("user");
-  console.log("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLl");
-  ALL.forEach(el => {
-   let pop= el.populate("user")
-   console.log(pop);
-    
-  });
+ 
 });
 
 // handle channnel creation
@@ -202,13 +197,18 @@ app.get("/dm/:id",(req,res)=>{
 })
 
 //serves json
-app.get("/api/channels", async (req, res) => {
-  await channeldb.find({}, (err, data) => {
-    if (err) {
-      throw err;
+app.get("/api/channels",  (req, res) => {
+   channeldb.find({})
+  .populate("user")
+  .exec((err, poppedUser)=>{
+    if(err){
+      console.log(err);
     }
-    res.json(data);
+    console.log(poppedUser[0].conversation);
+    res.json(poppedUser);
+    
   });
+  
 });
 
 // * upload profile pic
