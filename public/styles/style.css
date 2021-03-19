@@ -5,8 +5,7 @@ body {
   margin: 0;
   height: 100%;
 }
-a{
-  
+a {
 }
 .container {
   display: grid;
@@ -41,9 +40,8 @@ a{
   width: 38px;
   height: 38px;
   border-radius: 10%;
-  
 }
-#channelId{
+#channelId {
   display: none;
 }
 /* ___________________________________________________________ */
@@ -65,14 +63,12 @@ a{
 
 .sidebarContent {
   padding-left: 1rem;
-  
 }
 .sidebarSections {
   opacity: 70%;
-  
 }
 
-.loggedUser{
+.loggedUser {
   display: flex;
 }
 
@@ -104,15 +100,15 @@ a{
   outline: none;
 }
 
-#userId{
+#userId {
   display: none;
 }
 
-.users{
+.users {
   background-color: inherit;
   color: inherit;
   font-size: 15px;
-  border:none;
+  border: none;
   padding-top: 3px;
   cursor: pointer;
   width: 100%;
@@ -140,7 +136,7 @@ a{
 .messagefield {
   width: 80%;
   margin: 5px 20px;
-  background-color:transparent ;
+  background-color: transparent;
 }
 
 #form > button {
@@ -168,19 +164,53 @@ a{
   min-height: 300px;
   max-height: 400px;
   overflow-y: scroll;
-  /* border: 2px solid red; */
-}
-.chat-messages > .message {
-  height: 50px;
-  background-color: rgb(202, 202, 202);
 }
 
+.eachMessageDiv {
+  /* border: 2px solid red; */
+  display: flex;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(161, 157, 157, 0.425);
+
+}
+.eachMessageDiv:hover{
+  background-color: rgb(219, 214, 214);
+}
+.msgText {
+  margin: 0;
+  height: 50px;
+  /* font-weight:bold ; */
+  height: 2rem;
+}
+.userPic {
+  /* display: flex; */
+  align-items: flex-end;
+  padding-right: 11px;
+}
+
+.msgUser {
+  margin: 0;
+  font-weight: bold;
+}
+
+
+.message:hover {
+  background-color: grey;
+}
+.msgDate {
+  padding-bottom: 2px;
+  font-weight: normal;
+  width: 100%;
+  padding-left: 20px;
+}
+
+
 /* hide the id  */
-#channelId{
+#channelId {
   opacity: 0;
 }
 
-#registerForm{
+#registerForm {
   width: 300px;
   margin: 50px auto;
 }

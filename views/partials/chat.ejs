@@ -7,26 +7,19 @@
     <title>Document</title>
     <!-- <link rel="stylesheet" href="public/styles/style.css"> -->
   </head>
-  
+
   <body>
     <div class="conversationTab">
       <div class="conversation-header">
-
         <!-- * check if there is any channels in db -->
-        <% if (typeof data !='undefined' ) { %> 
+        <% if (typeof data !='undefined' ) { %> <%for (channel of data) { %>
+        <div><%= data[0].channelName %></div>
+        <div id="channelId"><%= data[0]._id %></div>
 
-            <%for (channel of data) { %>
-            <div><%= data[0].channelName %></div>
-            <div id="channelId"><%= data[0]._id %></div>
-
-            <% } %> 
-        
-        <% } %>
+        <% } %> <% } %>
       </div>
-      
 
       <div class="messagefield">
-
         <form action="/messages/new" method="POST" id="form">
           <!-- <form id="form"> -->
           <input name="newMessage" id="msg" autocomplete="off" />
@@ -40,8 +33,7 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/public/scripts/main.js"></script> 
+    <script src="/public/scripts/main.js"></script>
     <!-- <script src="/public/scripts/message.js"></script>  -->
-    
   </body>
 </html>

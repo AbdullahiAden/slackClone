@@ -176,7 +176,7 @@ app.get("/channels/:id", async (req, res) => {
 
 
    await channeldb.find({ _id: id })
-  .populate("user")
+  .populate("conversation.user")
   .exec((err, poppedChannel)=>{
     if(err){
       console.log(err);
@@ -262,7 +262,12 @@ app.post("/profile/upload", async (req, res) => {
 io.on("connection", (socket) => {
   // console.log("user connected");
   // find all RIGHT message from db and send to frontend, there will checked
-  channeldb.find().then((messages) => {
+  channeldb.find()
+  .populate("conversation.user")
+  .exec((err,messages) => {
+    if(err){
+      console.log(err);
+    }
     socket.emit("outputmsg", messages);
   });
 
@@ -283,7 +288,14 @@ io.on("connection", (socket) => {
     let chatMessage = await channeldb.updateOne(
       { _id: channel },
       { $push: { conversation: [{ message: message, user: trimmedUser }] } }
-    );
+    ).populate("conversation.user")
+      .exec((err,poppedMessage )=>{
+        if(err){
+          console.log(err);
+        }
+
+        io.emit("message",msg, trimmedUser, poppedMessage);
+      })
 
     // * populate user in channels
     // const theChannel = await channeldb.findById({_id : channel}).then(c=> console.log(c))
@@ -296,7 +308,7 @@ io.on("connection", (socket) => {
     // .populate("user").then(console.log(channeldb))
 
     // emit to the user after saving it
-    io.emit("message", msg);
+    
   });
 
   // when user disconnects

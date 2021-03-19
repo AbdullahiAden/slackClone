@@ -2,12 +2,14 @@ const mongoose = require("mongoose")
 
 const Schema = mongoose.Schema;
 
-const slackSchema = new mongoose.Schema({
+const DirectmessageSchema = new mongoose.Schema({
 
-    channelName: String,
+    userTo:  {type: Schema.Types.ObjectId, ref:"Users", required: true},
     // arrays are collections , obejcts are documents
     conversation : [
         {
+            userFrom:{type: Schema.Types.ObjectId, ref:"Users", required: true},
+
             message: {
                 type: String
             } ,
@@ -15,19 +17,12 @@ const slackSchema = new mongoose.Schema({
                 type: Date,
                 default:Date.now
             },
-            
-            user: {type: Schema.Types.ObjectId, ref:"Users", required: true
-
-            }
-            
-
-       
         }
     ]
 })
 
 // export default mongoose.model()
 
-module.exports= mongoose.model("Channel", slackSchema)
+module.exports= mongoose.model("DirectMessage", DirectmessageSchema)
 
     

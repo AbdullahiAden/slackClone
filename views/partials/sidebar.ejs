@@ -45,11 +45,10 @@
 
           <% if (typeof user !='undefined' ) { %>
           <div class="loggedUser">
-            <img src="/uploads/<%=user.profilePic %> "alt="Avatar"class="avatar"/>
+            <img src="/uploads/<%=user.profilePic %> "alt="/uploads/default.png"class="avatar"/>
             
             <div class="users" id="userName"><%= user.name %></div>
           </div>
-
           <p id="userId"><%= user._id %></p>
           <% } %>
 
@@ -61,9 +60,8 @@
 
               <div class="loggedUser">
               
-              
               <img src="/uploads/<%=users.profilePic %> "alt=""class="avatar"/>
-              <a href="/dm/<%= users.id %>" class="channelButt"><button class="users">  <%= users.name %></button></a>
+              <a href="/channels/<%= users.id %>" class="channelButt"><button class="users">  <%= users.name %></button></a>
               
               </div>
             <%} %> 
