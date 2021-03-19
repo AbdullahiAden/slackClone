@@ -13,6 +13,7 @@ const session = require("express-session");
 
 const channeldb = require("./models/channel");
 const Usersdb = require("./models/user");
+const Dmdb = require("./models/dm");
 
 const fileUpload = require("express-fileupload");
 
@@ -172,34 +173,43 @@ app.post("/channels/new", (req, res) => {
 
 app.get("/channels/:id", async (req, res) => {
   const { id } = req.params;
-  // const channelName= req.body.
-  // * we are only showing the channel that we are, should shows all channels on the sidebar
-  // * -- remove the filter in find
-   let currentChannel = await channeldb.find({ _id: id }, (err, data) => {
-    if (err) {
+
+
+   await channeldb.find({ _id: id })
+  .populate("user")
+  .exec((err, poppedChannel)=>{
+    if(err){
       console.log(err);
     }
-    // console.log("____DATA____");
-    res.render("home", { data, user: req.user });
-  })
-  .populate("user", "name")
-  console.log("____---------____");
-  
+    console.log(poppedChannel);
+    res.render("home", { data: poppedChannel, user: req.user });
+    
+  });
+   
   
   // console.log(currentChannel);
 
 });
 
 
-app.get("/dm/:id",(req,res)=>{
+app.get("/dm/:id",async (req,res)=>{
   const {id} = req.params
-  res.send(id)
+
+  Dmdb.findOne({_id: id}).then((err, dmUsers)=>{
+    if(err){
+      console.log(err)
+    }
+    console.log(dmUsers);
+    res.render("home", {dmUsers})
+  })
+
+  
 })
 
 //serves json
-app.get("/api/channels",  (req, res) => {
-   channeldb.find({})
-  .populate("user")
+app.get("/api/channels", async (req, res) => {
+  await channeldb.find({})
+  .populate('conversation.user')
   .exec((err, poppedUser)=>{
     if(err){
       console.log(err);
