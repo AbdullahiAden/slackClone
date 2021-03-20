@@ -42,7 +42,7 @@ a {
   border-radius: 10%;
 }
 #channelId {
-  display: none;
+  /* display: none; */
 }
 /* ___________________________________________________________ */
 .sidebar {
@@ -161,15 +161,16 @@ a {
 
 .chat-messages {
   padding-left: 20px;
-  min-height: 300px;
-  max-height: 400px;
+  min-height: 200px;
+  max-height: 340px;
   overflow-y: scroll;
+  
 }
 
 .eachMessageDiv {
   /* border: 2px solid red; */
   display: flex;
-  margin-bottom: 2px;
+  margin: 15px 0;
   border-bottom: 1px solid rgba(161, 157, 157, 0.425);
 
 }
@@ -207,7 +208,7 @@ a {
 
 /* hide the id  */
 #channelId {
-  opacity: 0;
+  /* opacity: 0; */
 }
 
 #registerForm {

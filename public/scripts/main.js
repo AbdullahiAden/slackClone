@@ -43,9 +43,8 @@ socket.on("message", (message, user,poppedMessage ) => {
 
   // call func on this message to add to dom -- emit the message, message.message will emit the content not the object
   outputMessage(message, user, poppedMessage);
-
- 
 });
+
 
 // message submit
 chatform.addEventListener("submit", (e) => {
@@ -58,40 +57,48 @@ chatform.addEventListener("submit", (e) => {
 
   socket.emit("chatMessage", { channel: channelId, message: msg , user : userId});
 
+
+  // socket.emit("dmMessage", { user: channelId, message: msg , user : userId});
+
+
   // Clear input
   e.target.elements.msg.value = "";
   e.target.elements.msg.focus();
 });
 
 // output database messages to dom
-function outputMessage(message) {
-  const div = document.createElement("div");
-  const msgTextdiv = document.createElement("div");
-  const eachMessageDiv = document.createElement("div");
-  div.classList.add("userPic");
-  msgTextdiv.classList.add("messageBlock");
-  eachMessageDiv.classList.add("eachMessageDiv");
+// function outputMessage(message) {
+//   const div = document.createElement("div");
+//   const msgTextdiv = document.createElement("div");
+//   const eachMessageDiv = document.createElement("div");
+//   div.classList.add("userPic");
+//   msgTextdiv.classList.add("messageBlock");
+//   eachMessageDiv.classList.add("eachMessageDiv");
 
 
-  // if(!currentChannelMsg.user){
-  // `<p class="msgText"> ${currentChannelMsg.message}</p> `
+//   // if(!currentChannelMsg.user){
+//   // `<p class="msgText"> ${currentChannelMsg.message}</p> `
 
-  // }else{
+//   // }else{
+//     console.log("1111111111111111111111");
+//     console.log(message );
+
+
+
+//   div.innerHTML = `<img class="avatar" src="../uploads/${message.user.profilePic}"></img>`;
     
-  div.innerHTML = `<img class="avatar" src="../uploads/${message.user.profilePic}"></img>`;
-    
-  msgTextdiv.innerHTML = `<p class="msgUser ">  ${message.user.name}  <span class= "msgDate">${currentChannelMsg.timestamp} </span></p>
+//   msgTextdiv.innerHTML = `<p class="msgUser ">  ${message.user.name}  <span class= "msgDate">${currentChannelMsg.timestamp} </span></p>
   
-    <p class="msgText"> ${message.message}</p> `;
+//     <p class="msgText"> ${message.message}</p> `;
 
-    eachMessageDiv.append(div)
-    eachMessageDiv.append(msgTextdiv)
-  document.querySelector(".chat-messages").appendChild(eachMessageDiv);
-  // document.querySelector(".chat-messages").appendChild(msgTextdiv);
-  // }
+//     eachMessageDiv.append(div)
+//     eachMessageDiv.append(msgTextdiv)
+//   document.querySelector(".chat-messages").appendChild(eachMessageDiv);
+//   // document.querySelector(".chat-messages").appendChild(msgTextdiv);
+//   // }
 
 
-}
+// }
 
 // output typed message to dom
 function outputMessage(currentChannelMsg) {
@@ -103,10 +110,12 @@ function outputMessage(currentChannelMsg) {
   eachMessageDiv.classList.add("eachMessageDiv");
 
 
-  // if(!currentChannelMsg.user){
-  // `<p class="msgText"> ${currentChannelMsg.message}</p> `
+  if(!currentChannelMsg.user){
+  `<p class="msgText"> ${currentChannelMsg.message}</p> `
 
-  // }else{
+  
+
+  }else{
     
   div.innerHTML = `<img class="avatar" src="../uploads/${currentChannelMsg.user.profilePic}"></img>`;
     
@@ -118,7 +127,7 @@ function outputMessage(currentChannelMsg) {
     eachMessageDiv.append(msgTextdiv)
   document.querySelector(".chat-messages").appendChild(eachMessageDiv);
   // document.querySelector(".chat-messages").appendChild(msgTextdiv);
-  // }
+  }
 
 
 }
