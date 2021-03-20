@@ -174,7 +174,13 @@ app.post("/channels/new", (req, res) => {
 app.get("/channels/:id", async (req, res) => {
   const { id } = req.params;
 
-   await channeldb.find({ _id: id })
+   await channeldb.find({ _id: id }).then((err, allDms)=>{
+
+    if(err){
+      console.log(err);
+    }
+    console.log(allDms);
+   })
   .populate("conversation.user")
   .exec((err, poppedChannel)=>{
     if(err){
@@ -190,17 +196,37 @@ app.get("/channels/:id", async (req, res) => {
 
 app.get("/dm/:id",async (req,res)=>{
   const {id} = req.params
-  const loggedUser = req.user
+  const loggedUser = req.user.id
   // *check if there is any messages bewtween clicked user and logged in user( req.user)
 
-    // *check if there is NO document of the clikced user and the logged in user
-
-  await Dmdb.find({userTo:id})
+  await Dmdb.find({userTo:id, "conversation.userFrom":loggedUser})
+  
   .populate("userTo")
   .exec((err, popDm)=>{
     if(err){
       console.log(err);
     }
+    // *load the messages if there is 
+
+
+    // *check if there is NO document of the clikced user and the logged in user
+
+    // popDm.map(singleDm=>{
+      if( !popDm){
+      const newDm = new Dmdb({userTo: id,conversation: [{userFrom: loggedUser}] })
+
+      newDm.save().then(dm=>{
+            console.log(dm);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+
+    }
+    // *else push messages
+
+    // })
+
     
     // console.log(poppedChannel);
     res.render("home", { dmUsers: popDm, user: req.user });
@@ -298,19 +324,22 @@ io.on("connection", (socket) => {
   });
 
   // * DM SOCKET 
-  // socket.on("dmMessage", async (msg) => {
-  //   // * save message to db before emitting to  the browser
-  //   // receive an object from client, the channel name and the message that will be sent to to the database
-  //   let { channel, message, user } = msg;
-  //   // trim to remove space from the string
-  //   let trimmedUser = user.trim();
-  //   // take whatever the user types and save it the db
-  //   await Dmdb.updateOne({ _id: channel },{ $push: { conversation: [{ message: message, user: trimmedUser }] } })
+  socket.on("dmMessage", async (dmMsg) => {
+    // * save message to db before emitting to  the browser
+    // receive an object from client, the channel name and the message that will be sent to to the database
+    let { userTo, userFrom, message } = dmMsg;
+    // trim to remove space from the string
+    let trimmedUserTo = userTo.trim();
+    let trimmedUserFrom = userFrom.trim();
+
+    // take whatever the user types and save it the db
+    await Dmdb.updateOne({userTo: trimmedUserTo, "converstaion.userFrom": trimmedUserFrom },
+    { $push:  {userTo:trimmedUserTo, conversation: [{ message: message,  userFrom: trimmedUserFrom }] } })
     
-  //       // emit to user after saving
-  //       io.emit("message",msg);
+        // emit to user after saving
+        io.emit("dmMess",dmMsg);
     
-  // });
+  });
 
   // when user disconnects
   socket.on("disconnect", () => {

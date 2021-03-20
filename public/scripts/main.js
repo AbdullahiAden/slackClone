@@ -7,9 +7,10 @@ let channelId = document.getElementById("channelId").textContent;
 
 let userName = document.getElementById('userName');
 let userId = document.getElementById('userId').textContent;
-
+let dmId = document.getElementById('dmId').textContent;
 
 const socket = io();
+
 // * fetched messages........
 socket.on("outputmsg", (messages) => {
   console.log(messages);
@@ -18,7 +19,6 @@ socket.on("outputmsg", (messages) => {
   // get the appropriate channel and its messages and output to the dom
 
   for (let message in messages) {
-
     let msgIds = messages[message]._id;
     let currentChannelMsgs = messages[message].conversation;
     console.log(msgIds);
@@ -45,6 +45,14 @@ socket.on("message", (message, user,poppedMessage ) => {
   outputMessage(message, user, poppedMessage);
 });
 
+socket.on("dmMess", (dmMessages) => {
+  // socket.on("message", ({ channel: channelId, message: message }) => {
+  console.log(dmMessages) ;
+
+  // outputMessage(message, user, poppedMessage);
+});
+
+
 
 // message submit
 chatform.addEventListener("submit", (e) => {
@@ -58,7 +66,8 @@ chatform.addEventListener("submit", (e) => {
   socket.emit("chatMessage", { channel: channelId, message: msg , user : userId});
 
 
-  // socket.emit("dmMessage", { user: channelId, message: msg , user : userId});
+  // * DM 
+  socket.emit("dmMessage", { userTo: dmId, userFrom:userId, message: msg });
 
 
   // Clear input
