@@ -26,6 +26,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 const { ensureAuthenticated } = require("./config/auth");
+const user = require("./models/user");
 
 
 const server = http.createServer(app);
@@ -174,13 +175,7 @@ app.post("/channels/new", (req, res) => {
 app.get("/channels/:id", async (req, res) => {
   const { id } = req.params;
 
-   await channeldb.find({ _id: id }).then((err, allDms)=>{
-
-    if(err){
-      console.log(err);
-    }
-    console.log(allDms);
-   })
+   await channeldb.find({ _id: id })
   .populate("conversation.user")
   .exec((err, poppedChannel)=>{
     if(err){
@@ -196,23 +191,22 @@ app.get("/channels/:id", async (req, res) => {
 
 app.get("/dm/:id",async (req,res)=>{
   const {id} = req.params
-  const loggedUser = req.user.id
+  const loggedUser = req.user
   // *check if there is any messages bewtween clicked user and logged in user( req.user)
 
-  await Dmdb.find({userTo:id, "conversation.userFrom":loggedUser})
-  
+
+  await Dmdb.find({userTo:id})
   .populate("userTo")
   .exec((err, popDm)=>{
     if(err){
       console.log(err);
     }
-    // *load the messages if there is 
-
+    
+    console.log(popDm);
 
     // *check if there is NO document of the clikced user and the logged in user
 
-    // popDm.map(singleDm=>{
-      if( !popDm){
+    if( popDm === " "){
       const newDm = new Dmdb({userTo: id,conversation: [{userFrom: loggedUser}] })
 
       newDm.save().then(dm=>{
@@ -223,20 +217,48 @@ app.get("/dm/:id",async (req,res)=>{
         })
 
     }
-    // *else push messages
+        res.render("home", { dmUsers: popDm, user: req.user });
 
-    // })
-
-    
-    // console.log(poppedChannel);
-    res.render("home", { dmUsers: popDm, user: req.user });
     
   });
+
+  
 
 
   
 })
 
+
+// *mentions 
+
+app.get("/mentions/:id", async (req, res)=>{
+  const {id}= req.params
+  // * loop though db and get the messages of the logged in user & msges where his name is mentioned
+
+  // *channels 
+  await channeldb.find({"conversation.user":id})
+  .populate('conversation.user')
+  .exec((err, userMentions)=>{
+    if(err){
+      console.log(err);
+    }
+
+    if(userMentions){
+      console.log(userMentions);
+        res.render("home", {mentions:userMentions, user: req.user} );
+
+    }
+    
+
+
+    
+  });
+
+  // * dms 
+
+
+
+})
 //serves json
 app.get("/api/channels", async (req, res) => {
   await channeldb.find({})
@@ -324,22 +346,19 @@ io.on("connection", (socket) => {
   });
 
   // * DM SOCKET 
-  socket.on("dmMessage", async (dmMsg) => {
-    // * save message to db before emitting to  the browser
-    // receive an object from client, the channel name and the message that will be sent to to the database
-    let { userTo, userFrom, message } = dmMsg;
-    // trim to remove space from the string
-    let trimmedUserTo = userTo.trim();
-    let trimmedUserFrom = userFrom.trim();
-
-    // take whatever the user types and save it the db
-    await Dmdb.updateOne({userTo: trimmedUserTo, "converstaion.userFrom": trimmedUserFrom },
-    { $push:  {userTo:trimmedUserTo, conversation: [{ message: message,  userFrom: trimmedUserFrom }] } })
+  // socket.on("dmMessage", async (msg) => {
+  //   // * save message to db before emitting to  the browser
+  //   // receive an object from client, the channel name and the message that will be sent to to the database
+  //   let { channel, message, user } = msg;
+  //   // trim to remove space from the string
+  //   let trimmedUser = user.trim();
+  //   // take whatever the user types and save it the db
+  //   await Dmdb.updateOne({ _id: channel },{ $push: { conversation: [{ message: message, user: trimmedUser }] } })
     
-        // emit to user after saving
-        io.emit("dmMess",dmMsg);
+  //       // emit to user after saving
+  //       io.emit("message",msg);
     
-  });
+  // });
 
   // when user disconnects
   socket.on("disconnect", () => {

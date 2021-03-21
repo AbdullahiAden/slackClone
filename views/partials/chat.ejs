@@ -20,13 +20,66 @@
 
          <!-- * DM  -->
 
-         <% if (typeof dmUsers !='undefined' ) { %> <%for (dmUser of dmUsers) { %>
-          <div ><%= dmUser.userTo.name %></div>
+         <% if (typeof dmUsers !='undefined' ) { %> 
+          <%for (dmUser of dmUsers) { %>
+          <div> <%= dmUser.userTo.name %></div>
           <div id="dmId"><%= dmUser.userTo._id %></div>
   
           <% } %> <% } %>
       
       </div>
+
+      <!-- *MENTIONS -->
+      <div class="mentionsDiv"> 
+        <% if (typeof mentions !='undefined' ) { %>
+          <% console.log("((((((") %> 
+          <% console.log(mentions ) %> 
+          <% console.log("((((((") %> 
+          
+          <!-- ** -->
+          <%mentions.forEach(function(object) {  %> 
+            <% object.conversation.forEach(function(subObject) { %> 
+            <% console.log(subObject); %> 
+            <% }); %> 
+            <%  });%> 
+            <!--**  -->
+
+          <% for(mention of mentions){ %> 
+            <p><%=mention.channelName  %> </p>
+
+            <!-- <div class="eachMentionDiv"> <%#= mention.conversation %> </div> -->
+              <%= user._id %>
+              
+            <!-- *loop through mention.conversation -->
+            <% for( conv of mention.conversation){ %> 
+              <div class="eachMentionDiv"> 
+
+                 <!-- *  loop through user object and get name --> 
+
+                <% if ( conv.user === user.id){ %> 
+<% } %> 
+                  <!-- *loop through user  -->
+                  
+
+
+                <%= conv.user %>
+                <%= conv.message %> 
+              </div>
+
+              <%# console.log(conv) %> 
+
+              <% } %> 
+              
+          <% } %> 
+        
+          
+      <% } %>
+
+
+      </div>
+      
+
+
 
 
       <div class="messagefield">
@@ -37,8 +90,10 @@
         </form>
       </div>
 
+
       <div class="chat-messages">
         <!-- * new messages will appear  -->
+
       </div>
     </div>
 

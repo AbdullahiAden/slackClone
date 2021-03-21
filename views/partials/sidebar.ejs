@@ -16,15 +16,23 @@
 
         <div class="sidebarSections">
           <p>All DMS</p>
-          <p>Mentions & reactions</p>
+          
+          <% if (typeof user !='undefined' ) { %>
+            <a href="/mentions/<%= user._id %> ">
+              <button class="channelButt">Mentions & reactions</button>
+            </a>
+            <% } %>
+          
+          
+          
           <p>Saved items</p>
 
           <p>Channels</p>
 
           <a href="/channels">back</a>
-          <!-- * loop through channel from db -->
 
-          <!-- * check if there is any channels in db -->
+          <!--  loop through channel from db -->
+          <!--  check if there is any channels in db -->
           <% if (typeof data !='undefined' ) { %> 
             <% for (channel of data) { %>
           <div class="channelsDiv">
@@ -38,10 +46,18 @@
 
           <!-- * DM  -->
           <% if (typeof dmUsers !='undefined' ) { %> <%for (dmUser of dmUsers) { %>
-            <div id="dmId"><%= dmUser.userTo.name %></div>
-            <div id="dmId"><%= dmUser.userTo._id%></div>
+            <div>
+              <img class="avatar" src="/uploads/<%=dmUser.userTo.profilePic %> " alt="">
+              <%= dmUser.userTo.name %>
+            </div>
+            <div><%= dmUser.userTo._id%></div>
     
             <% } %> <% } %>
+
+
+            <!-- * MENTIONS -->
+
+
           <div><button class="channelButt">Add Channel</button></div>
 
           <form method="POST" action="/channels/new">

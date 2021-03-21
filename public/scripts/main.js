@@ -5,9 +5,14 @@ let input = document.getElementById("msg");
 // get the channels id from the the coversation header of the message field
 let channelId = document.getElementById("channelId").textContent;
 
+console.log(channelId + "--chanel");
+
 let userName = document.getElementById('userName');
 let userId = document.getElementById('userId').textContent;
-let dmId = document.getElementById('dmId').textContent;
+
+// let dmId = document.getElementById("dmId").textContent;
+
+// console.log(dmId);
 
 const socket = io();
 
@@ -33,6 +38,10 @@ socket.on("outputmsg", (messages) => {
       }
     }
   }
+
+  // *MENTIONS
+
+  
 });
 
 //* message from server
@@ -45,12 +54,12 @@ socket.on("message", (message, user,poppedMessage ) => {
   outputMessage(message, user, poppedMessage);
 });
 
-socket.on("dmMess", (dmMessages) => {
-  // socket.on("message", ({ channel: channelId, message: message }) => {
-  console.log(dmMessages) ;
+// socket.on("dmMess", (dmMessages) => {
+//   // socket.on("message", ({ channel: channelId, message: message }) => {
+//   console.log(dmMessages) ;
 
-  // outputMessage(message, user, poppedMessage);
-});
+//   // outputMessage(message, user, poppedMessage);
+// });
 
 
 
@@ -67,6 +76,7 @@ chatform.addEventListener("submit", (e) => {
 
 
   // * DM 
+  // * cant prvent def submit and cant clear input with below line
   socket.emit("dmMessage", { userTo: dmId, userFrom:userId, message: msg });
 
 
@@ -75,39 +85,6 @@ chatform.addEventListener("submit", (e) => {
   e.target.elements.msg.focus();
 });
 
-// output database messages to dom
-// function outputMessage(message) {
-//   const div = document.createElement("div");
-//   const msgTextdiv = document.createElement("div");
-//   const eachMessageDiv = document.createElement("div");
-//   div.classList.add("userPic");
-//   msgTextdiv.classList.add("messageBlock");
-//   eachMessageDiv.classList.add("eachMessageDiv");
-
-
-//   // if(!currentChannelMsg.user){
-//   // `<p class="msgText"> ${currentChannelMsg.message}</p> `
-
-//   // }else{
-//     console.log("1111111111111111111111");
-//     console.log(message );
-
-
-
-//   div.innerHTML = `<img class="avatar" src="../uploads/${message.user.profilePic}"></img>`;
-    
-//   msgTextdiv.innerHTML = `<p class="msgUser ">  ${message.user.name}  <span class= "msgDate">${currentChannelMsg.timestamp} </span></p>
-  
-//     <p class="msgText"> ${message.message}</p> `;
-
-//     eachMessageDiv.append(div)
-//     eachMessageDiv.append(msgTextdiv)
-//   document.querySelector(".chat-messages").appendChild(eachMessageDiv);
-//   // document.querySelector(".chat-messages").appendChild(msgTextdiv);
-//   // }
-
-
-// }
 
 // output typed message to dom
 function outputMessage(currentChannelMsg) {
