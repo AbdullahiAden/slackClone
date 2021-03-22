@@ -188,13 +188,31 @@ app.get("/channels/:id", async (req, res) => {
    
 });
 
+app.get("/channels/:id/delete",async (req,res)=>{
+  const {id}= req.params
+  
+
+  // *loop through comversation in db and find message with id and delete
+  await channeldb.find({ "conversation._id": id })
+  .exec((err, messageObj)=>{
+    if(err){
+      console.log(err);
+    }
+    
+    console.log(messageObj);
+    res.render("deleteMsg", {messageObj: messageObj, reqParams:id } );
+    // res.send(id)
+  });
+
+})
+
 
 app.get("/dm/:id",async (req,res)=>{
   const {id} = req.params
   const loggedUser = req.user
   // *check if there is any messages bewtween clicked user and logged in user( req.user)
 
-  await Dmdb.find({userTo:id})
+  await Dmdb.find({userTo:id , "conversation.userFrom":loggedUser._id})
   .populate("userTo")
   .exec((err, popDm)=>{
     if(err){
@@ -203,9 +221,10 @@ app.get("/dm/:id",async (req,res)=>{
     
     console.log(popDm);
 
-    // *check if there is NO document of the clikced user and the logged in user
+    // *check if there is NO document of the clikced user and the logged in user 
+    // * check by if userTo === logged in user or userFrom === logged in user
 
-    if( popDm === " "){
+    if( !popDm){
       const newDm = new Dmdb({userTo: id,conversation: [{userFrom: loggedUser}] })
 
       newDm.save().then(dm=>{
@@ -244,17 +263,11 @@ app.get("/mentions/:id", async (req, res)=>{
     }
 
     
-      console.log(userMentions[0].conversation);
+      console.log(userMentions[0]);
       for(let mentionedObj of userMentions[0].conversation){
-        // console.log(mentionedObj.user);
-        
-        // console.log(req.user._id);
-        if(mentionedObj.user ===req.user ){
-
-        }
         
       }
-        res.render("home", {mentions:userMentions[0].conversation, reqUser: req.user} );
+        res.render("home", {mentions:userMentions[0], reqUser: req.user , reqParams:id} );
 
     
   });
@@ -341,7 +354,7 @@ io.on("connection", (socket) => {
         }
         // ********************************************* NEED TO BE FIXED WITH NEEDING TO RELOAD TO GET THE USER WHO SENT IT 
         // emit to user after saving
-        io.emit("message",msg, trimmedUser, poppedMessage);
+        io.emit("message",msg);
       })
     
   });

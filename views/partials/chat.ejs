@@ -28,39 +28,37 @@
         <% } %> <% } %>
       </div>
 
-      <!-- *MENTIONS -->
+      <!-- *MENTIONS --> 
       <div class="mentionsDiv">
         <% if (typeof mentions !='undefined' ) { %> 
-          
-          <%#=console.log(mentions ); %> 
-          <div class="eachMentionDiv">
-
-             <%=mentions  %>
-            </div>
-
-            
+          <%console.log(mentions) %>
           <!-- * getting each channels data  -->
-          <% for(mention of mentions){ %>
+          <% for(mention of mentions.conversation){ %>
 
-            <!-- * TRYING to compare the user field with logged in user's id  -->            
-            <%if(mention.user ==reqUser._id ){ %>
-
-              <%console.log(mention) %>
+            <!-- *  compare the user field with req.params   -->            
+            <%if(mention.user ==reqParams ){ %>
+               <div class="chat-messages">
+               
+                <% if (typeof reqUser !='undefined' ) { %> 
+                  <div class="eachMessageDiv">
+                  
+                  <img class="userPic avatar" src="/uploads/<%=reqUser.profilePic %> " alt="">
+                  <%=reqUser.name %> 
+                  <div class="messageBlock"><%=mention.message %></div>
+                  
+                </div>
+                <% } %> 
+                
+                  
+                </div>
+              
+              
+              
             <%} %>
-
-            <%#=console.log(mention ); %>
-            <%#=console.log("^^^^^^^^^^^^^^"); %>
-            <%#=console.log(reqUser._id) %>
-              <p><%#=mention.channelName %></p>
-
-              <!-- *loop through mention.conversation -->
              
           <% } %> 
         <% } %>
       </div>
-
-
-
 
       <div class="messagefield">
         

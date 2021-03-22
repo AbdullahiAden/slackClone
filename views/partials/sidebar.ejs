@@ -56,7 +56,13 @@
 
 
             <!-- * MENTIONS -->
-            <%#=reqUser.name %> 
+            <% if (typeof reqUser !='undefined' ) { %> 
+                <div>
+                  <img class="avatar" src="/uploads/<%=reqUser.profilePic %> " alt="">
+                  <%=reqUser.name %> 
+                </div>
+            <% } %> 
+            
 
 
           <div><button class="channelButt">Add Channel</button></div>

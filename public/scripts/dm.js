@@ -1,3 +1,5 @@
+// const dm = require("../../models/dm");
+
 let chatformDm = document.getElementById("form");
 let inputDm = document.getElementById("msg");
 
@@ -32,7 +34,7 @@ Dmsocket.on("outputDmMsg", (dmMessages) => {
             let currentDmUserFrom = currentDmMsg.userFrom
             console.log(currentDmUserFrom);
 
-            if (dmId === dmToIds &&  currentDmUserFrom=== userId ) {
+            if (dmId === dmToIds &&  currentDmUserFrom === userId || userId === dmId && currentDmUserFrom ===dmToIds) {
             
                 let currentDmMessages = currentDmMsg;
                 console.log(currentDmMessages);

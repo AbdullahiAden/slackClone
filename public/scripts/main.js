@@ -4,6 +4,8 @@ let input = document.getElementById("msg");
 // get the channels id from the the coversation header of the message field
 let channelId = document.getElementById("channelId").textContent;
 
+
+
 console.log(channelId + "--chanel");
 
 let userName = document.getElementById('userName');
@@ -37,12 +39,12 @@ socket.on("outputmsg", (allChannels) => {
 
 // message from server
 // socket.emit("message", { channel: channelId, message: msg });
-socket.on("message", (message, user,poppedMessage ) => {
+socket.on("message", (message ) => {
   // socket.on("message", ({ channel: channelId, message: message }) => {
   console.log(message) ;
 
   // * call func on this message to add typed message to to dom , BUT CANNOT GET THE LOGGED IN USES PROFILE PIC AND NAME, gets only after reload
-  outputMessage(message, user, poppedMessage);
+  outputMessage(message);
 });
 
 // message submit
@@ -77,8 +79,13 @@ function outputMessage(currentChannelMsg) {
   div.innerHTML = `<img class="avatar" src="../uploads/${currentChannelMsg.user.profilePic}"></img>`;
     
   msgTextdiv.innerHTML = `<p class="msgUser ">  ${currentChannelMsg.user.name}  <span class= "msgDate">${currentChannelMsg.timestamp} </span></p>
+
   
-    <p class="msgText"> ${currentChannelMsg.message}</p> `;
+
+    <p class="msgText"> ${currentChannelMsg.message}</p>
+    <a href="/channels/${currentChannelMsg._id}/delete">delete</a>
+    `;
+    
 
     eachMessageDiv.append(div)
     eachMessageDiv.append(msgTextdiv)
