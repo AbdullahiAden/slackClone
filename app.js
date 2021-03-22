@@ -310,26 +310,24 @@ app.post("/profile/upload", async (req, res) => {
   }
 });
 
-// *
 
 // *............................................. SOCKETS  .........................................................................
-// *................................................................................................................................
+// *Channels Sockets :::::::::::::::::::::::::::::::
 
 io.on("connection", (socket) => {
-  // console.log("user connected");
-  // find all RIGHT message from db and send to frontend, there will checked
+  // find all channels from db and send to frontend, there will checked
   channeldb.find()
   .populate("conversation.user")
-  .exec((err,messages) => {
+  .exec((err,allChannels) => {
     if(err){
       console.log(err);
     }
-    socket.emit("outputmsg", messages);
+    socket.emit("outputmsg", allChannels);
   });
 
   // send your message to everyone except you -- listen for chatMessage that is sent from client
+  // save message to db before emitting to  the browser
   socket.on("chatMessage", async (msg) => {
-    // * save message to db before emitting to  the browser
     // receive an object from client, the channel name and the message that will be sent to to the database
     let { channel, message, user } = msg;
     // trim to remove space from the string
