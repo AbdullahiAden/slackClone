@@ -10,26 +10,40 @@ console.log(dmId);
 const Dmsocket = io();
 // * fetched messages........
 Dmsocket.on("outputDmMsg", (dmMessages) => {
+    // all dms 
     console.log(dmMessages);
     //  loop through the direct messages in our db, match channelId from message header(which is hidden)
     // get the appropriate channel and its messages and output to the dom
-    for (let message in dmMessages) {
-        console.log(message);
+    for (let dmMsg in dmMessages) {
+        // console.log(dmMsg);
 
-    //   let msgIds = messages[message]._id;
-    //   let currentChannelMsgs = dmMessages[message].conversation;
-      // console.log(msgIds);
-  
-    //   if (channelId === msgIds) {
-    //     console.log(currentChannelMsgs);
-    //     for (currentChannelMsg of currentChannelMsgs) {
-    //       let currentmessages = currentChannelMsg.message;
-    //       // console.log(currentmessages);
-    //       // console.log(currentChannelMsg.user);
-  
-    //     //   outputMessage(currentDmMsg);
-    //     }
-    //   }
+      let dmToIds = dmMessages[dmMsg].userTo._id;
+      let dmFromIds = dmMessages[dmMsg].conversation;
+
+      let currentDmMsgs = dmMessages[dmMsg].conversation;
+    //   console.log(dmToIds + "___");
+    //   console.log(dmFromIds + "___");
+    //   console.log(currentDmMsgs);
+
+        //   console.log(currentDmMsgs);
+        //   outputDmMessage(currentDmMsgs);
+        
+        for (currentDmMsg of currentDmMsgs) {
+            let currentDmUserFrom = currentDmMsg.userFrom
+            console.log(currentDmUserFrom);
+
+            if (dmId === dmToIds &&  currentDmUserFrom=== userId ) {
+            
+                let currentDmMessages = currentDmMsg;
+                console.log(currentDmMessages);
+                // console.log(currentChannelMsg.user);
+                outputDmMessage(currentDmMessages);
+            }
+
+            if (dmId !== dmToIds &&  currentDmUserFrom !== userId ){
+                console.log("no conversation between these two ");
+            }
+        }
     }
     
   });
@@ -66,33 +80,33 @@ chatformDm.addEventListener("submit", (e) => {
 });
 
 // output typed message to dom
-function outputMessage(currentChannelMsg) {
+function outputDmMessage(currentDmMessages) {
   const div = document.createElement("div");
-  const msgTextdiv = document.createElement("div");
-  const eachMessageDiv = document.createElement("div");
+  const msgTextDmDiv = document.createElement("div");
+  const eachDmDiv = document.createElement("div");
   div.classList.add("userPic");
-  msgTextdiv.classList.add("messageBlock");
-  eachMessageDiv.classList.add("eachMessageDiv");
+//   msgTextDmDiv.classList.add("messageBlock");
+  eachDmDiv.classList.add("eachMessageDiv");
 
 
-  if(!currentChannelMsg.user){
-  `<p class="msgText"> ${currentChannelMsg.message}</p> `
+//   if(!currentDmMsg.user){
+//   `<p class="msgText"> ${currentChannelMsg.message}</p> `
 
   
 
-  }else{
+//   }else{
     
-  div.innerHTML = `<img class="avatar" src="../uploads/${currentChannelMsg.user.profilePic}"></img>`;
+//   div.innerHTML = `<img class="avatar" src="../uploads/${currentChannelMsg.user.profilePic}"></img>`;
     
-  msgTextdiv.innerHTML = `<p class="msgUser ">  ${currentChannelMsg.user.name}  <span class= "msgDate">${currentChannelMsg.timestamp} </span></p>
+msgTextDmDiv.innerHTML = `<p class="msgUser ">  ${currentDmMessages.userFrom}  <span class= "msgDate">${currentDmMessages.timestamp} </span></p>
   
-    <p class="msgText"> ${currentChannelMsg.message}</p> `;
+    <p class="msgText"> ${currentDmMessages.message}</p> `;
 
-    eachMessageDiv.append(div)
-    eachMessageDiv.append(msgTextdiv)
-  document.querySelector(".chat-messages").appendChild(eachMessageDiv);
-  // document.querySelector(".chat-messages").appendChild(msgTextdiv);
+    // eachMessageDiv.append(div)
+    eachDmDiv.append(msgTextDmDiv)
+//   document.querySelector(".chat-messages").appendChild(eachDmDiv);
+  document.querySelector(".chat-messages").appendChild(msgTextDmDiv);
   }
 
 
-}
+// }
