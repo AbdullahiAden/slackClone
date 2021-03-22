@@ -16,89 +16,68 @@
         <div><%= data[0].channelName %></div>
         <div id="channelId"><%= data[0]._id %></div>
 
-         <% } %>
+        <% } %>
 
-         <!-- * DM  -->
+        <!-- * DM  -->
 
-         <% if (typeof dmUsers !='undefined' ) { %> 
-          <%for (dmUser of dmUsers) { %>
-          <div> <%= dmUser.userTo.name %></div>
-          <div id="dmId"><%= dmUser.userTo._id %></div>
-  
-          <% } %> <% } %>
-      
+        <% if (typeof dmUsers !='undefined' ) { %> <%for (dmUser of dmUsers) {
+        %>
+        <div><%= dmUser.userTo.name %></div>
+        <div id="dmId"><%= dmUser.userTo._id %></div>
+
+        <% } %> <% } %>
       </div>
 
       <!-- *MENTIONS -->
-      <div class="mentionsDiv"> 
-        <% if (typeof mentions !='undefined' ) { %>
-          <% console.log("((((((") %> 
-          <% console.log(mentions ) %> 
-          <% console.log("((((((") %> 
+      <div class="mentionsDiv">
+        <% if (typeof mentions !='undefined' ) { %> 
           
-          <!-- ** -->
-          <%mentions.forEach(function(object) {  %> 
-            <% object.conversation.forEach(function(subObject) { %> 
-            <% console.log(subObject); %> 
-            <% }); %> 
-            <%  });%> 
-            <!--**  -->
+          <%#=console.log(mentions ); %> 
+          <div class="eachMentionDiv">
 
-          <% for(mention of mentions){ %> 
-            <p><%=mention.channelName  %> </p>
+             <%=mentions  %>
+            </div>
 
-            <!-- <div class="eachMentionDiv"> <%#= mention.conversation %> </div> -->
-              <%= user._id %>
-              
-            <!-- *loop through mention.conversation -->
-            <% for( conv of mention.conversation){ %> 
-              <div class="eachMentionDiv"> 
+            
+          <!-- * getting each channels data  -->
+          <% for(mention of mentions){ %>
 
-                 <!-- *  loop through user object and get name --> 
+            <!-- * TRYING to compare the user field with logged in user's id  -->            
+            <%if(mention.user ==reqUser._id ){ %>
 
-                <% if ( conv.user === user.id){ %> 
-<% } %> 
-                  <!-- *loop through user  -->
-                  
+              <%console.log(mention) %>
+            <%} %>
 
+            <%#=console.log(mention ); %>
+            <%#=console.log("^^^^^^^^^^^^^^"); %>
+            <%#=console.log(reqUser._id) %>
+              <p><%#=mention.channelName %></p>
 
-                <%= conv.user %>
-                <%= conv.message %> 
-              </div>
-
-              <%# console.log(conv) %> 
-
-              <% } %> 
-              
+              <!-- *loop through mention.conversation -->
+             
           <% } %> 
-        
-          
-      <% } %>
-
-
+        <% } %>
       </div>
-      
 
 
 
 
       <div class="messagefield">
-        <!-- <form action="/messages/new" method="POST" id="form"> -->
-          <form id="form">
+        
+        <form id="form">
           <input name="newMessage" id="msg" autocomplete="off" />
           <button id="submit-msg">send</button>
         </form>
       </div>
 
-
       <div class="chat-messages">
         <!-- * new messages will appear  -->
-
       </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/public/scripts/main.js"></script>
+    <script src="/public/scripts/dm.js"></script>
     <!-- <script src="/public/scripts/message.js"></script>  -->
   </body>
 </html>

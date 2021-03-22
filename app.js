@@ -140,7 +140,7 @@ app.post("/user/login", (req, res, next) => {
   })(req, res, next);
 });
 
-//* :::::::::::::::::::::::: POPULATE   :::::::::::::::::::::::::::::::::::::::::::::::
+
 app.get("/channels", ensureAuthenticated, async (req, res) => {
   // console.log(req.user);
   let ALL= await channeldb.find({}, (err, data) => {
@@ -194,7 +194,6 @@ app.get("/dm/:id",async (req,res)=>{
   const loggedUser = req.user
   // *check if there is any messages bewtween clicked user and logged in user( req.user)
 
-
   await Dmdb.find({userTo:id})
   .populate("userTo")
   .exec((err, popDm)=>{
@@ -236,27 +235,31 @@ app.get("/mentions/:id", async (req, res)=>{
   // * loop though db and get the messages of the logged in user & msges where his name is mentioned
 
   // *channels 
+  // getting the channels where the logged in user has written in but not messages
   await channeldb.find({"conversation.user":id})
-  .populate('conversation.user')
+  // .populate('conversation.user')
   .exec((err, userMentions)=>{
     if(err){
       console.log(err);
     }
 
-    if(userMentions){
-      console.log(userMentions);
-        res.render("home", {mentions:userMentions, user: req.user} );
-
-    }
     
+      console.log(userMentions[0].conversation);
+      for(let mentionedObj of userMentions[0].conversation){
+        // console.log(mentionedObj.user);
+        
+        // console.log(req.user._id);
+        if(mentionedObj.user ===req.user ){
 
+        }
+        
+      }
+        res.render("home", {mentions:userMentions[0].conversation, reqUser: req.user} );
 
     
   });
 
   // * dms 
-
-
 
 })
 //serves json
@@ -345,20 +348,54 @@ io.on("connection", (socket) => {
     
   });
 
+  // when user disconnects
+  socket.on("disconnect", () => {
+    console.log("disconnect ");
+    io.emit("message", " a user disconnected........");
+  });
+});
+
+
+
+// ** DM SOCKETS :::::::::::::::::::::::::::::::::::
+io.on("connection", (socket) => {
+
+  Dmdb.find()
+  .populate("userTo")
+  .exec((err,dmMessages) => {
+    if(err){
+      console.log(err);
+    }
+    socket.emit("outputDmMsg", dmMessages);
+  });
+  console.log("new dm ...");
+  //  socket.emit("outputDmMsg", "hello to dm ");
+
   // * DM SOCKET 
-  // socket.on("dmMessage", async (msg) => {
-  //   // * save message to db before emitting to  the browser
-  //   // receive an object from client, the channel name and the message that will be sent to to the database
-  //   let { channel, message, user } = msg;
-  //   // trim to remove space from the string
-  //   let trimmedUser = user.trim();
-  //   // take whatever the user types and save it the db
-  //   await Dmdb.updateOne({ _id: channel },{ $push: { conversation: [{ message: message, user: trimmedUser }] } })
+  socket.on("dmMessage", async (msg) => {
+    // * save message to db before emitting to  the browser
+    // receive an object from client, the channel name and the message that will be sent to to the database
+    let { userTo, userFrom, message } = msg;
+    let trimmedUserTo = userTo.trim();
+    let trimmedUserFrom = userFrom.trim();
+    // take whatever the user types and save it the db
+    await Dmdb.updateOne({ userTo : trimmedUserTo , "conversation.userFrom": trimmedUserFrom },{ $push: { conversation: [{ message: message, userFrom: trimmedUserFrom }] } })
+    .populate("userTo")
+      .exec((err,poppedDmMessage )=>{
+        if(err){
+          console.log(err);
+        }
+        // ********************************************* NEED TO BE FIXED WITH NEEDING TO RELOAD TO GET THE USER WHO SENT IT 
+        // emit to user after saving
+        console.log(msg);
+        console.log(poppedDmMessage);
+
+        io.emit("dmMessage", msg);
+      })
+
+        // io.emit("dmMsg",msg);
     
-  //       // emit to user after saving
-  //       io.emit("message",msg);
-    
-  // });
+  });
 
   // when user disconnects
   socket.on("disconnect", () => {
@@ -366,5 +403,8 @@ io.on("connection", (socket) => {
     io.emit("message", " a user disconnected........");
   });
 });
+
+
+
 
 server.listen(3001);
