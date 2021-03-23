@@ -212,7 +212,7 @@ app.get("/channels/:id/delete",async (req,res)=>{
   //     } 
   // }
   console.log(messageObj);
-    res.render("deleteMsg", {messageObj: messageObj, reqParams:id } );
+    res.redirect(`/channels/${id}`)
     // res.send(id)
   });
 
