@@ -189,17 +189,29 @@ app.get("/channels/:id", async (req, res) => {
 });
 
 app.get("/channels/:id/delete",async (req,res)=>{
+  
   const {id}= req.params
   
 
   // *loop through comversation in db and find message with id and delete
-  await channeldb.find({ "conversation._id": id })
-  .exec((err, messageObj)=>{
+  await channeldb.updateOne(
+    // find the _id in coversation arr that matches the clicked one and pull it  
+    { "conversation._id": id  },
+    
+    {$pull: {conversation: {_id: id }}} )
+    .then((err, messageObj)=>{
     if(err){
       console.log(err);
     }
-    
-    console.log(messageObj);
+
+
+  //    for (eachConv of messageObj[0].conversation ){
+  //     if(id == eachConv._id ){ 
+  //       console.log(eachConv);
+           
+  //     } 
+  // }
+  console.log(messageObj);
     res.render("deleteMsg", {messageObj: messageObj, reqParams:id } );
     // res.send(id)
   });
@@ -239,10 +251,6 @@ app.get("/dm/:id",async (req,res)=>{
 
     
   });
-
-  
-
-
   
 })
 
@@ -251,24 +259,17 @@ app.get("/dm/:id",async (req,res)=>{
 
 app.get("/mentions/:id", async (req, res)=>{
   const {id}= req.params
-  // * loop though db and get the messages of the logged in user & msges where his name is mentioned
+  // loop though db and get the messages of the logged in user
 
-  // *channels 
-  // getting the channels where the logged in user has written in but not messages
+  // mentions from channels 
   await channeldb.find({"conversation.user":id})
   // .populate('conversation.user')
   .exec((err, userMentions)=>{
     if(err){
       console.log(err);
     }
-
-    
-      console.log(userMentions[0]);
-      for(let mentionedObj of userMentions[0].conversation){
-        
-      }
-        res.render("home", {mentions:userMentions[0], reqUser: req.user , reqParams:id} );
-
+   
+    res.render("home", {mentions:userMentions[0], reqUser: req.user , reqParams:id} );
     
   });
 
