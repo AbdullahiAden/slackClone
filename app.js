@@ -76,7 +76,7 @@ app.use((req, res, next) => {
 
 // ------ ROUTES ----------
 
-// * REGISTER
+// REGISTER
 app.get("/", async (req, res) => {
   res.render("signup");
 });
@@ -127,7 +127,7 @@ app.post("/user/register", (req, res) => {
   }
 });
 
-// * LOGIN
+// LOGIN
 app.get("/user/login", (req, res) => {
   res.render("login");
 });
@@ -188,32 +188,21 @@ app.get("/channels/:id", async (req, res) => {
    
 });
 
+// delete messages
 app.get("/channels/:id/delete",async (req,res)=>{
-  
+  // message id 
   const {id}= req.params
   
-
-  // *loop through comversation in db and find message with id and delete
-  await channeldb.updateOne(
     // find the _id in coversation arr that matches the clicked one and pull it  
+    await channeldb.updateOne(
     { "conversation._id": id  },
-    
     {$pull: {conversation: {_id: id }}} )
     .then((err, messageObj)=>{
     if(err){
       console.log(err);
     }
-
-
-  //    for (eachConv of messageObj[0].conversation ){
-  //     if(id == eachConv._id ){ 
-  //       console.log(eachConv);
-           
-  //     } 
-  // }
-  console.log(messageObj);
-    res.redirect(`/channels/${id}`)
-    // res.send(id)
+    // redirect back to the page the request came from. 
+    res.redirect("back")
   });
 
 })
