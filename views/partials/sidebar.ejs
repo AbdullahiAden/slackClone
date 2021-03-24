@@ -48,9 +48,9 @@
           <% if (typeof dmUsers !='undefined' ) { %> <%for (dmUser of dmUsers) { %>
             <div>
               <img class="avatar" src="/uploads/<%=dmUser.userTo.profilePic %> " alt="">
-              <%= dmUser.userTo.name %>
+              <%= reqParams %>
             </div>
-            <div><%= dmUser.userTo._id%></div>
+            <div><%#= dmUser.userTo._id%></div>
     
             <% } %> <% } %>
 

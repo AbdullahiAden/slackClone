@@ -22,8 +22,9 @@
 
         <% if (typeof dmUsers !='undefined' ) { %> <%for (dmUser of dmUsers) {
         %>
-        <div><%= dmUser.userTo.name %></div>
-        <div id="dmId"><%= dmUser.userTo._id %></div>
+        <div>FROM:__ <%= reqUser._id%></div>
+
+        <div id="dmId"><%= reqParams %></div>
 
         <% } %> <% } %>
       </div>
