@@ -1,11 +1,13 @@
 const express = require('express')
 const router = express.Router()
 
+router.use(express.urlencoded({ extended: true }));
+
+
+// REGISTER
 router.get("/", async (req, res) => {
-    res.render("signup")
-    });
-    
-router.get("/login", (req, res)=>{
-      res.render("login")
-})
+  res.render("signup");
+});
+
+
     

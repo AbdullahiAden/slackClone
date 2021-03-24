@@ -4,9 +4,9 @@ let input = document.getElementById("msg");
 // get the channels id from the the coversation header of the message field
 let channelId = document.getElementById("channelId").textContent;
 
+let loggedInUserProfilePic = document.querySelector('.loggedInUserProfilePic').src;
 
-
-console.log(channelId + "--chanel");
+console.log(loggedInUserProfilePic);
 
 let userName = document.getElementById('userName');
 
@@ -44,7 +44,7 @@ socket.on("message", (message ) => {
   console.log(message) ;
 
   // * call func on this message to add typed message to to dom , BUT CANNOT GET THE LOGGED IN USES PROFILE PIC AND NAME, gets only after reload
-  outputMessage(message);
+  outputMessage(message, userName);
 });
 
 // message submit

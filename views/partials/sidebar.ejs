@@ -76,7 +76,7 @@
 
           <% if (typeof user !='undefined' ) { %>
           <div class="loggedUser">
-            <img src="/uploads/<%=user.profilePic %> "alt="/uploads/default.png"class="avatar"/>
+            <img class="loggedInUserProfilePic avatar" src="/uploads/<%=user.profilePic %> "alt="/uploads/default.png"class="avatar"/>
             
             <div class="users" id="userName"><%= user.name %></div>
           </div>

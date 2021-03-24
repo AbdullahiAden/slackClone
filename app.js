@@ -11,13 +11,14 @@ const passport = require("passport");
 const flash = require("connect-flash");
 const session = require("express-session");
 
+require("./config/passport")(passport);
+
+// models
 const channeldb = require("./models/channel");
 const Usersdb = require("./models/user");
 const Dmdb = require("./models/dm");
 
 const fileUpload = require("express-fileupload");
-
-require("./config/passport")(passport);
 
 //create  uploads folder
 app.use(fileUpload({createParentPath: true,}));
@@ -26,8 +27,6 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 const { ensureAuthenticated } = require("./config/auth");
-const user = require("./models/user");
-
 
 const server = http.createServer(app);
 const io = socketio(server);
@@ -51,6 +50,7 @@ app.use(express.urlencoded({ extended: false }));
 // EJS
 app.set("view engine", "ejs");
 app.use("/public", express.static(path.join(__dirname, "public")));
+
 // Sessions
 app.use(
   session({
@@ -74,11 +74,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// ------ ROUTES ----------
+// ------ ROUTES -----------------------------------------------------------
 
 // REGISTER
 app.get("/", async (req, res) => {
   res.render("signup");
+  
 });
 
 // handle signup
@@ -160,7 +161,7 @@ app.get("/channels", ensureAuthenticated, async (req, res) => {
 });
 
 // handle channnel creation
-app.post("/channels/new", (req, res) => {
+app.post("/channels/new", ensureAuthenticated , (req, res) => {
   const channelName = req.body.channelInput;
   const newChannel = channeldb({ channelName });
 
@@ -172,7 +173,7 @@ app.post("/channels/new", (req, res) => {
   res.redirect("/channels");
 });
 
-app.get("/channels/:id", async (req, res) => {
+app.get("/channels/:id",ensureAuthenticated , async (req, res) => {
   const { id } = req.params;
 
    await channeldb.find({ _id: id })
@@ -189,7 +190,7 @@ app.get("/channels/:id", async (req, res) => {
 });
 
 // delete messages
-app.get("/channels/:id/delete",async (req,res)=>{
+app.get("/channels/:id/delete", ensureAuthenticated, async (req,res)=>{
   // message id 
   const {id}= req.params
   
@@ -207,8 +208,9 @@ app.get("/channels/:id/delete",async (req,res)=>{
 
 })
 
+// *DMS
 
-app.get("/dm/:id",async (req,res)=>{
+app.get("/dm/:id", ensureAuthenticated,  async (req,res)=>{
   const {id} = req.params
   const loggedUser = req.user
   // *check if there is any messages bewtween clicked user and logged in user( req.user)
@@ -244,9 +246,9 @@ app.get("/dm/:id",async (req,res)=>{
 })
 
 
-// *mentions 
+// mentions - only for channels NOT DMS...
 
-app.get("/mentions/:id", async (req, res)=>{
+app.get("/mentions/:id", ensureAuthenticated, async (req, res)=>{
   const {id}= req.params
   // loop though db and get the messages of the logged in user
 
@@ -280,9 +282,9 @@ app.get("/api/channels", async (req, res) => {
   
 });
 
-// * upload profile pic
 
-app.get("/profile/upload", (req, res) => {
+// upload profile pic
+app.get("/profile/upload", ensureAuthenticated, (req, res) => {
   res.render("imageIndex");
 });
 app.post("/profile/upload", async (req, res) => {
@@ -314,8 +316,8 @@ app.post("/profile/upload", async (req, res) => {
 });
 
 
-// *............................................. SOCKETS  .........................................................................
-// *Channels Sockets :::::::::::::::::::::::::::::::
+// .................... SOCKETS  ........................
+// Channels Sockets ......
 
 io.on("connection", (socket) => {
   // find all channels from db and send to frontend, there will checked
@@ -334,9 +336,9 @@ io.on("connection", (socket) => {
     // receive an object from client, the channel name and the message that will be sent to to the database
     let { channel, message, user } = msg;
     // trim to remove space from the string
-    let trimmedUser = user.trim();
+    let trimmedUserId = user.trim();
     // take whatever the user types and save it the db
-    await channeldb.updateOne({ _id: channel },{ $push: { conversation: [{ message: message, user: trimmedUser }] } })
+    await channeldb.updateOne({ _id: channel },{ $push: { conversation: [{ message: message, user: trimmedUserId }] } })
     .populate("conversation.user")
       .exec((err,poppedMessage )=>{
         if(err){
@@ -344,7 +346,7 @@ io.on("connection", (socket) => {
         }
         // ********************************************* NEED TO BE FIXED WITH NEEDING TO RELOAD TO GET THE USER WHO SENT IT 
         // emit to user after saving
-        io.emit("message",msg);
+        io.emit("message",msg );
       })
     
   });
@@ -358,7 +360,7 @@ io.on("connection", (socket) => {
 
 
 
-// ** DM SOCKETS :::::::::::::::::::::::::::::::::::
+// * DM SOCKETS :::::::::::::::::::::::::::::::::::
 io.on("connection", (socket) => {
 
   Dmdb.find()
