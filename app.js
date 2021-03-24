@@ -76,7 +76,7 @@ app.use((req, res, next) => {
 
 // ------ ROUTES -----------------------------------------------------------
 
-// REGISTER
+// signup
 app.get("/", async (req, res) => {
   res.render("signup");
   
@@ -128,7 +128,7 @@ app.post("/user/register", (req, res) => {
   }
 });
 
-// LOGIN
+// Login
 app.get("/user/login", (req, res) => {
   res.render("login");
 });
@@ -141,6 +141,13 @@ app.post("/user/login", (req, res, next) => {
   })(req, res, next);
 });
 
+// Logout
+
+app.get('/user/logout', (req, res) => {
+  req.logout();
+  req.flash('success_msg', 'You are logged out')
+  res.redirect('/user/login');
+});
 
 app.get("/channels", ensureAuthenticated, async (req, res) => {
   // console.log(req.user);
@@ -173,6 +180,7 @@ app.post("/channels/new", ensureAuthenticated , (req, res) => {
   res.redirect("/channels");
 });
 
+// get the conversation of specific channel
 app.get("/channels/:id",ensureAuthenticated , async (req, res) => {
   const { id } = req.params;
 
@@ -215,7 +223,9 @@ app.get("/dm/:id", ensureAuthenticated,  async (req,res)=>{
   const loggedUser = req.user
   // *check if there is any messages bewtween clicked user and logged in user( req.user)
 
-  await Dmdb.find({userTo:id , "conversation.userFrom":loggedUser._id})
+  // $or: [{ userTo:id , "conversation.userFrom":loggedUser._id}, {userTo: loggedUser._id , "conversation.userFrom":id }]
+  // await Dmdb.find( {userTo:id , "conversation.userFrom":loggedUser._id})
+  await Dmdb.find({$or: [{ userTo:id , "conversation.userFrom":loggedUser._id}, {userTo: loggedUser._id , "conversation.userFrom":id }] } )
   .populate("userTo")
   .exec((err, popDm)=>{
     if(err){
@@ -227,7 +237,8 @@ app.get("/dm/:id", ensureAuthenticated,  async (req,res)=>{
     // *check if there is NO document of the clikced user and the logged in user 
     // * check by if userTo === logged in user or userFrom === logged in user
 
-    if( !popDm){
+    // if the arr is emppty
+    if( popDm.length<1){
       const newDm = new Dmdb({userTo: id,conversation: [{userFrom: loggedUser}] })
 
       newDm.save().then(dm=>{
@@ -238,7 +249,10 @@ app.get("/dm/:id", ensureAuthenticated,  async (req,res)=>{
         })
 
     }
-        res.render("home", { dmUsers: popDm, user: req.user });
+    console.log(req.user._id + " reqUUUU");
+    console.log(id + " reqPAR");
+
+        res.render("home", { dmUsers: popDm, reqUser: req.user , reqParams:id});
 
     
   });
@@ -314,6 +328,8 @@ app.post("/profile/upload", async (req, res) => {
     res.send(err);
   }
 });
+
+
 
 
 // .................... SOCKETS  ........................
