@@ -397,19 +397,21 @@ io.on("connection", (socket) => {
     // * save message to db before emitting to  the browser
     // receive an object from client, the channel name and the message that will be sent to to the database
     let { userTo, userFrom, message } = msg;
-    let trimmedUserTo = userTo.trim();
-    let trimmedUserFrom = userFrom.trim();
+    // let trimmedUserTo = userTo.trim();
+    // let trimmedUserFrom = userFrom.trim();
     // take whatever the user types and save it the db
-    await Dmdb.updateOne({ userTo : trimmedUserTo , "conversation.userFrom": trimmedUserFrom },{ $push: { conversation: [{ message: message, userFrom: trimmedUserFrom }] } })
+
+
+    // both users in the dm can push in to their dm channels
+    await Dmdb.updateOne({$or: [ { userTo : userTo , "conversation.userFrom": userFrom },  { userTo:userFrom , "conversation.userFrom":userTo}] },{ $push: { conversation: [{ message: message , userFrom:userFrom}] } })
     .populate("userTo")
       .exec((err,poppedDmMessage )=>{
         if(err){
           console.log(err);
         }
-        // ********************************************* NEED TO BE FIXED WITH NEEDING TO RELOAD TO GET THE USER WHO SENT IT 
         // emit to user after saving
         console.log(msg);
-        console.log(poppedDmMessage);
+        // console.log(poppedDmMessage);
 
         io.emit("dmMessage", msg);
       })
