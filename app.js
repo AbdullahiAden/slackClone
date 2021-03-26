@@ -226,13 +226,14 @@ app.get("/dm/:id", ensureAuthenticated,  async (req,res)=>{
   // $or: [{ userTo:id , "conversation.userFrom":loggedUser._id}, {userTo: loggedUser._id , "conversation.userFrom":id }]
   // await Dmdb.find( {userTo:id , "conversation.userFrom":loggedUser._id})
   await Dmdb.find({$or: [{ userTo:id , "conversation.userFrom":loggedUser._id}, {userTo: loggedUser._id , "conversation.userFrom":id }] } )
-  .populate("userTo")
+  .populate("userTo ")
+  .populate("conversation.userFrom ")
   .exec((err, popDm)=>{
     if(err){
       console.log(err);
     }
     
-    console.log(popDm);
+    // console.log(popDm);
 
     // *check if there is NO document of the clikced user and the logged in user 
     // * check by if userTo === logged in user or userFrom === logged in user
@@ -249,8 +250,8 @@ app.get("/dm/:id", ensureAuthenticated,  async (req,res)=>{
         })
 
     }
-    console.log(req.user._id + " reqUUUU");
-    console.log(id + " reqPAR");
+    // console.log(req.user._id + " reqUUUU");
+    // console.log(id + " reqPAR");
 
         res.render("home", { dmUsers: popDm, reqUser: req.user , reqParams:id});
 
@@ -268,13 +269,14 @@ app.get("/mentions/:id", ensureAuthenticated, async (req, res)=>{
 
   // mentions from channels 
   await channeldb.find({"conversation.user":id})
-  // .populate('conversation.user')
+  .populate('conversation.user')
   .exec((err, userMentions)=>{
     if(err){
       console.log(err);
     }
+
    
-    res.render("home", {mentions:userMentions[0], reqUser: req.user , reqParams:id} );
+    res.render("home", {mentions:userMentions, reqUser: req.user , reqParams:id} );
     
   });
 

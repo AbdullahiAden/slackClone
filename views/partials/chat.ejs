@@ -15,51 +15,82 @@
         <% if (typeof data !='undefined' ) { %>
         <div><%= data[0].channelName %></div>
         <div id="channelId"><%= data[0]._id %></div>
-
         <% } %>
 
-        <!-- * DM  -->
+        <!-- * DM ----------------------------------- -->
 
-        <% if (typeof dmUsers !='undefined' ) { %> <%for (dmUser of dmUsers) {
-        %>
-        <div>FROM:__ <%= reqUser._id%></div>
+        <% if (typeof dmUsers !='undefined' ) { %>
+          <div ><%#= console.log(dmUsers)%> </div>
 
-        <div id="dmId"><%= reqParams %></div>
-
-        <% } %> <% } %>
+          <%for (dmUser of dmUsers) {%>
+            <div>FROM:__ <%= reqUser._id%></div>
+            <div id="dmId"><%= reqParams %></div>
+          
+          <% } %>
       </div>
+        <!--loop through the current dm channel and get the message to display --> 
+          <div class="chat-messages">
+            <%for (currentDm of  dmUser.conversation) {%>
+              <div class="eachMessageDiv">
+                <div class="userPic"><img class="avatar" src="/uploads/<%= currentDm.userFrom.profilePic %>" alt=""> </div>
 
-      <!-- *MENTIONS --> 
+                <div class="messageBlock">
+                  <div class="msgUser"><%=currentDm.userFrom.name  %> </div>
+                  <p class="msgText"><%= currentDm.message%> </p>
+                </div>
+                <div ><%#= console.log(currentDm)%> </div>
+              
+              </div>
+
+             <% } %>
+          </div>
+        <% } %>
+
+    </div>
+
+
+ <!--  MENTIONS:  CAN ONLY SEE CURRENT LOGGED IN USERS'S MESSAGES ---------------------------------> 
       <div class="mentionsDiv">
         <% if (typeof mentions !='undefined' ) { %> 
-          <%console.log(mentions) %>
+          
           <!-- * getting each channels data  -->
-          <% for(mention of mentions.conversation){ %>
 
-            <!-- *  compare the user field with req.params   -->            
-            <%if(mention.user ==reqParams ){ %>
-               <div class="chat-messages">
-               
-                <% if (typeof reqUser !='undefined' ) { %> 
-                  <div class="eachMessageDiv">
-                  
-                  <img class="userPic avatar" src="/uploads/<%=reqUser.profilePic %> " alt="">
-                  <%=reqUser.name %> 
-                  <div class="messageBlock"><%=mention.message %></div>
-                  
-                </div>
-                <% } %> 
+          <% for(channels of mentions){ %>
+            <div class="mentionsChannels">
+              <h3><%=channels.channelName %></h3>
+              
+
+          <% for(channelsConv of channels.conversation ){ %>
+
+              <!-- only get the logged in users messages -->
+              <% if(channelsConv.user._id == reqParams){ %> 
                 
-                  
+                <div class="">
+
+
+                  <div class="eachMessageDiv">
+
+                    <div class="userPic"><img class="avatar" src="/uploads/<%=channelsConv.user.profilePic  %> " alt=""></div>
+                    
+                    <div class="msgText"><%=channelsConv.message  %></div>
+                  </div>
                 </div>
-              
-              
-              
-            <%} %>
+                
+              <%}  %> 
              
+          <% } %> 
+
+            </div>
+            
+            
           <% } %> 
         <% } %>
       </div>
+
+      <div class="chat-messages">
+        <!-- * new messages will appear fro channels   -->
+      </div>
+
 
       <div class="messagefield">
         
@@ -69,10 +100,9 @@
         </form>
       </div>
 
-      <div class="chat-messages">
-        <!-- * new messages will appear  -->
-      </div>
-    </div>
+
+
+
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/public/scripts/main.js"></script>

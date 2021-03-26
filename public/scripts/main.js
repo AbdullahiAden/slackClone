@@ -4,6 +4,9 @@ let input = document.getElementById("msg");
 // get the channels id from the the coversation header of the message field
 let channelId = document.getElementById("channelId").textContent;
 
+
+let userId = document.getElementById('userId').textContent;
+
 let loggedInUserProfilePic = document.querySelector('.loggedInUserProfilePic').src;
 
 console.log(loggedInUserProfilePic);

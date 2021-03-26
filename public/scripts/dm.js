@@ -3,10 +3,9 @@
 let chatformDm = document.getElementById("form");
 let inputDm = document.getElementById("msg");
 
-let userId = document.getElementById('userId').textContent;
+// let userId = document.getElementById('userId').textContent;
 let dmId = document.getElementById("dmId").textContent;
 
-console.log(userId);
 console.log(dmId);
 
 const Dmsocket = io();
@@ -23,9 +22,9 @@ Dmsocket.on("outputDmMsg", (dmMessages) => {
       let dmFromIds = dmMessages[dmMsg].conversation;
 
       let currentDmMsgs = dmMessages[dmMsg].conversation;
-    //   console.log(dmToIds + "___");
-    //   console.log(dmFromIds + "___");
-    //   console.log(currentDmMsgs);
+      console.log(dmToIds + "___");
+      console.log(dmFromIds + "___");
+      console.log(currentDmMsgs);
 
         //   console.log(currentDmMsgs);
         //   outputDmMessage(currentDmMsgs);
