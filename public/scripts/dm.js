@@ -9,6 +9,7 @@ let dmUserFromTrimmed= dmUserFrom.trim()
 const Dmsocket = io();
 // * fetched messages........
 Dmsocket.on("outputDmMsg", (dmMessages) => {
+  console.log(dmMessages);
     //  loop through the direct messages in our db, match channelId from message header(which is hidden)
     // get the appropriate channel and its messages and output to the dom
     for (let dmMsg of dmMessages) {
@@ -52,7 +53,7 @@ chatformDm.addEventListener("submit", (e) => {
   e.target.elements.msg.focus();
 });
 
-// output typed message to dom
+// output all  message to dom
 function outputDmMessage(dmMessages) {
   const msgTextDmDiv = document.createElement("div");
     

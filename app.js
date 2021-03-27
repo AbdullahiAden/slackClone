@@ -411,7 +411,7 @@ io.on("connection", (socket) => {
 
 
 
-// * DM SOCKETS :::::::::::::::::::::::::::::::::::
+// DM SOCKETS .........
 io.on("connection", (socket) => {
 
   // socket.on('login', function(data){
@@ -445,13 +445,9 @@ io.on("connection", (socket) => {
         }
         // emit to user after saving
         console.log(msg);
-        // console.log(poppedDmMessage);
-
         io.emit("dmMessage", msg);
       })
 
-        // io.emit("dmMsg",msg);
-    
   });
 
   // when user disconnects
