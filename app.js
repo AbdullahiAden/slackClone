@@ -170,7 +170,8 @@ app.get("/channels", ensureAuthenticated, async (req, res) => {
 // handle channnel creation
 app.post("/channels/new", ensureAuthenticated , (req, res) => {
   const channelName = req.body.channelInput;
-  const newChannel = channeldb({ channelName });
+
+  const newChannel = channeldb({ channelName:channelName });
 
   console.log(newChannel);
   // if there is channel written

@@ -32,13 +32,11 @@
           <div class="chat-messages">
             <%for (currentDm of  dmUser.conversation) {%>
               <div class="eachMessageDiv">
-                <div class="userPic"><img class="avatar" src="/uploads/<%#= currentDm.userFrom.profilePic %>" alt=""> </div>
+                <!-- <div class="userPic"><img class="avatar" src="/uploads/<%#= currentDm.userFrom.profilePic %>" alt=""> </div> -->
 
                 <div class="messageBlock">
-                  <div class="msgUser"><%#=currentDm.userFrom.name  %> </div>
                   <p class="msgText"><%= currentDm.message%> </p>
                 </div>
-                <div ><%#= console.log(currentDm)%> </div>
               
               </div>
 

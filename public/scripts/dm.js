@@ -6,9 +6,6 @@ let dmId = document.getElementById("dmId").textContent;
 
 let dmUserFromTrimmed= dmUserFrom.trim()
 
-console.log(dmId + "___TO");
-console.log(dmUserFrom + "___FROM");
-
 const Dmsocket = io();
 // * fetched messages........
 Dmsocket.on("outputDmMsg", (dmMessages) => {
