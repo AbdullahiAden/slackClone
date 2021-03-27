@@ -47,40 +47,28 @@
     </div>
 
 
- <!--  MENTIONS:  CAN ONLY SEE CURRENT LOGGED IN USERS'S MESSAGES ---------------------------------> 
+ <!--  MENTIONS:  CAN SEE CURRENT LOGGED IN USERS'S tagged messages ------------------> 
       <div class="mentionsDiv">
         <% if (typeof mentions !='undefined' ) { %> 
           
           <!-- * getting each channels data  -->
 
           <% for(channels of mentions){ %>
-            <div class="mentionsChannels">
-              <h3><%=channels.channelName %></h3>
-              
 
           <% for(channelsConv of channels.conversation ){ %>
 
-              <!-- only get the logged in users messages -->
-              <% if(channelsConv.user._id == reqParams){ %> 
-                
-                <div class="">
-
-
-                  <div class="eachMessageDiv">
-
-                    <div class="userPic"><img class="avatar" src="/uploads/<%=channelsConv.user.profilePic  %> " alt=""></div>
-                    
-                    <div class="msgText"><%=channelsConv.message  %></div>
-                  </div>
-                </div>
-                
-              <%}  %> 
-             
-          <% } %> 
-
+           <%  let msgStr = channelsConv.message %> 
+            <% if(msgStr.includes("@" + reqUser.name )){ %> 
+            <% console.log(channelsConv); %> 
+            <div class="mentionsChannels"> <img class="avatar" src="/uploads/<%=channelsConv.user.profilePic  %> " alt=""> <%=channelsConv.user.name  %>  mentioned you in  <%=channels.channelName  %> 
+              <div><%= channelsConv.message %> </div>
+            
             </div>
             
-            
+            <%}  %> 
+
+          <% } %> 
+
           <% } %> 
         <% } %>
       </div>
