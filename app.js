@@ -206,6 +206,7 @@ app.get("/channels/:id/delete", ensureAuthenticated, async (req,res)=>{
     // find the _id in coversation arr that matches the clicked one and pull it  
     // *check if the user that is deleting (logged in ) matches the message' s  user
     // * or if it is admin, then delete
+
     
     await channeldb.updateOne(
     { "conversation._id": id  },
