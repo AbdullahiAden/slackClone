@@ -170,7 +170,8 @@ app.get("/channels", ensureAuthenticated, async (req, res) => {
 // handle channnel creation
 app.post("/channels/new", ensureAuthenticated , (req, res) => {
   const channelName = req.body.channelInput;
-  const newChannel = channeldb({ channelName });
+
+  const newChannel = channeldb({ channelName:channelName , admin:req.user._id });
 
   console.log(newChannel);
   // if there is channel written
@@ -203,6 +204,9 @@ app.get("/channels/:id/delete", ensureAuthenticated, async (req,res)=>{
   const {id}= req.params
   
     // find the _id in coversation arr that matches the clicked one and pull it  
+    // *check if the user that is deleting (logged in ) matches the message' s  user
+    // * or if it is admin, then delete
+    
     await channeldb.updateOne(
     { "conversation._id": id  },
     {$pull: {conversation: {_id: id }}} )
@@ -348,7 +352,7 @@ io.on("connection", (socket) => {
 
     if(!SocketUsers.includes(SocketUsers[socket.id])){
       
-      SocketUsers.push(data.userId) 
+      SocketUsers.push(SocketUsers[socket.id]) 
      
     socket.emit("onlineUsers",SocketUsers )
     }
@@ -394,11 +398,13 @@ io.on("connection", (socket) => {
   // when user disconnects
   socket.on("disconnect", () => {
     console.log('user ' + SocketUsers + ' disconnected');
-    // remove saved socket from users object
-      delete SocketUsers;
 
-    // console.log("disconnect ");
-    // io.emit("message", " a user disconnected........");
+      if(SocketUsers.includes(SocketUsers[socket.id])){
+        console.log( SocketUsers[socket.id]);
+        
+          delete SocketUsers[socket.id];
+      }
+    
   });
 });
 
