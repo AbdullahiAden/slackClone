@@ -5,6 +5,8 @@ const Schema = mongoose.Schema;
 const slackSchema = new mongoose.Schema({
 
     channelName: String,
+    admin:{type: Schema.Types.ObjectId, ref:"Users", required: true},
+
     // arrays are collections , obejcts are documents
     conversation : [
         {

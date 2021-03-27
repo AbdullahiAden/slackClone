@@ -12,7 +12,7 @@ Dmsocket.on("outputDmMsg", (dmMessages) => {
     //  loop through the direct messages in our db, match channelId from message header(which is hidden)
     // get the appropriate channel and its messages and output to the dom
     for (let dmMsg of dmMessages) {
-        // console.log(dmMsg);
+        console.log(dmMsg);
         // console.log(dmMsg.conversation);
 
         for (let dmConv of dmMsg.conversation ){

@@ -170,8 +170,7 @@ app.get("/channels", ensureAuthenticated, async (req, res) => {
 // handle channnel creation
 app.post("/channels/new", ensureAuthenticated , (req, res) => {
   const channelName = req.body.channelInput;
-
-  const newChannel = channeldb({ channelName:channelName });
+  const newChannel = channeldb({ channelName });
 
   console.log(newChannel);
   // if there is channel written
@@ -349,7 +348,7 @@ io.on("connection", (socket) => {
 
     if(!SocketUsers.includes(SocketUsers[socket.id])){
       
-      SocketUsers.push(SocketUsers[socket.id]) 
+      SocketUsers.push(data.userId) 
      
     socket.emit("onlineUsers",SocketUsers )
     }
@@ -395,13 +394,11 @@ io.on("connection", (socket) => {
   // when user disconnects
   socket.on("disconnect", () => {
     console.log('user ' + SocketUsers + ' disconnected');
+    // remove saved socket from users object
+      delete SocketUsers;
 
-      if(SocketUsers.includes(SocketUsers[socket.id])){
-        console.log( SocketUsers[socket.id]);
-        
-          delete SocketUsers[socket.id];
-      }
-    
+    // console.log("disconnect ");
+    // io.emit("message", " a user disconnected........");
   });
 });
 
