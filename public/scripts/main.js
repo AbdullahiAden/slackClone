@@ -9,11 +9,40 @@ let userId = document.getElementById('userId').textContent;
 
 let loggedInUserProfilePic = document.querySelector('.loggedInUserProfilePic').src;
 
-console.log(loggedInUserProfilePic);
 
-let userName = document.getElementById('userName');
+let userName = document.getElementById('userName').textContent;
 
 const socket = io();
+
+socket.emit('login',{userId:userId});
+socket.on("onlineUsers", (onlineUsers) => {
+  
+  console.log(onlineUsers);
+  onlineUsers.forEach(onlineUser => {
+    renderOnlineUsers(onlineUser)
+  });
+
+  
+  
+})
+
+function renderOnlineUsers(onlineUsers){
+  const onlineUsersDiv = document.createElement("div");
+  const onlineUsersNames = document.createElement("div");
+  onlineUsersDiv.classList.add("onlineUsers")
+    
+ 
+  // onlineUsersNames.innerHTML = `<p class="msgUser ">  ${userName}  </p> `
+  
+  onlineUsersDiv.innerHTML = `<p > ${onlineUsers} </p> `;
+  // onlineUsersDiv.append(onlineUsersNames)
+  //   document.querySelector(".chat-messages").appendChild(eachDmDiv);
+    document.querySelector(".onlineUsers").appendChild(onlineUsersDiv);
+
+
+}
+
+
 
 //  fetched messages........
 socket.on("outputmsg", (allChannels) => {
@@ -96,3 +125,5 @@ function outputMessage(currentChannelMsg) {
   // document.querySelector(".chat-messages").appendChild(msgTextdiv);
   }
 }
+
+

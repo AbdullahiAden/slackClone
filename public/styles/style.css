@@ -69,6 +69,14 @@ a {
 .sidebarSections {
   opacity: 70%;
 }
+.onlineUsers {
+  width: 210px;
+  /* background: yellow; */
+}
+.onlineUsers > span{
+  text-decoration: underline;
+}
+
 
 .loggedUser {
   display: flex;

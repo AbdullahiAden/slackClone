@@ -336,8 +336,30 @@ app.post("/profile/upload", async (req, res) => {
 
 // .................... SOCKETS  ........................
 // Channels Sockets ......
-
+const SocketUsers = []
 io.on("connection", (socket) => {
+
+  socket.on('login', function(data){
+    console.log('a user ' + data.userId + ' connected');
+    // saving userId to object with socket ID
+
+    SocketUsers[socket.id] = data.userId;
+    console.log(SocketUsers[socket.id]);
+
+    if(!SocketUsers.includes(SocketUsers[socket.id])){
+      
+      SocketUsers.push(SocketUsers[socket.id]) 
+     
+    socket.emit("onlineUsers",SocketUsers )
+    }
+    else
+    {
+      socket.emit("onlineUsers",SocketUsers )
+    }
+    
+    
+  });
+
   // find all channels from db and send to frontend, there will checked
   channeldb.find()
   .populate("conversation.user")
@@ -371,8 +393,14 @@ io.on("connection", (socket) => {
 
   // when user disconnects
   socket.on("disconnect", () => {
-    console.log("disconnect ");
-    io.emit("message", " a user disconnected........");
+    console.log('user ' + SocketUsers + ' disconnected');
+
+      if(SocketUsers.includes(SocketUsers[socket.id])){
+        console.log( SocketUsers[socket.id]);
+        
+          delete SocketUsers[socket.id];
+      }
+    
   });
 });
 
@@ -380,6 +408,12 @@ io.on("connection", (socket) => {
 
 // * DM SOCKETS :::::::::::::::::::::::::::::::::::
 io.on("connection", (socket) => {
+
+  // socket.on('login', function(data){
+  //   console.log('a user ' + data.userId + ' connected');
+  //   // saving userId to object with socket ID
+  //   SocketUsers[socket.id] = data.userId;
+  // });
 
   Dmdb.find()
   .populate("userTo")
@@ -389,20 +423,15 @@ io.on("connection", (socket) => {
     }
     socket.emit("outputDmMsg", dmMessages);
   });
-  console.log("new dm ...");
-  //  socket.emit("outputDmMsg", "hello to dm ");
 
   // * DM SOCKET 
   socket.on("dmMessage", async (msg) => {
     // * save message to db before emitting to  the browser
     // receive an object from client, the channel name and the message that will be sent to to the database
     let { userTo, userFrom, message } = msg;
-    // let trimmedUserTo = userTo.trim();
-    // let trimmedUserFrom = userFrom.trim();
+  
     // take whatever the user types and save it the db
-
-
-    // both users in the dm can push in to their dm channels
+    // both users in the dm can push in to their dm channels with $or
     await Dmdb.updateOne({$or: [ { userTo : userTo , "conversation.userFrom": userFrom },  { userTo:userFrom , "conversation.userFrom":userTo}] },{ $push: { conversation: [{ message: message , userFrom:userFrom}] } })
     .populate("userTo")
       .exec((err,poppedDmMessage )=>{
@@ -422,9 +451,13 @@ io.on("connection", (socket) => {
 
   // when user disconnects
   socket.on("disconnect", () => {
-    console.log("disconnect ");
+    // console.log('user ' + SocketUsers[socket.id] + ' disconnected');
+    // remove saved socket from users object
+    // delete SocketUsers[socket.id];
+    // console.log("disconnect ");
     io.emit("message", " a user disconnected........");
   });
+
 });
 
 
