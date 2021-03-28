@@ -53,17 +53,41 @@ socket.on("outputmsg", (allChannels) => {
   for (let currentChannel in allChannels) {
 
     let channnelIds = allChannels[currentChannel]._id;
+    let fullCurrentChannel=allChannels[currentChannel]
+    
+    
+    // console.log(fullCurrentChannel );
     let currentChannelMsgs = allChannels[currentChannel].conversation;
-    // console.log(channnelIds);
+    console.log(currentChannelMsgs);
 
     if (channelId === channnelIds) {
-      console.log(currentChannelMsgs);
+      // if the logged in user IS admin in that channel, he/ she will get the delete functionality for the messages 
+
+      if(fullCurrentChannel.admin===userId){
+        // console.log(fullCurrentChannel.admin);
+        // console.log("admin");
+
+        // console.log(currentChannelMsgs);
       for (currentChannelMsg of currentChannelMsgs) {
         // all messages in the  databasein for the current channel , send to function to be outputted 
         let currentmessages = currentChannelMsg.message;
         // console.log(currentmessages);
-        outputMessage(currentChannelMsg);
+      
+        outputMessagesForAdmin(currentChannelMsg);
       }
+      }
+      // if the logged in user IS NOT admin in that channel, he/ she will not get the delete functionality for the messages 
+      else if(fullCurrentChannel.admin !==userId){
+        for (currentChannelMsg of currentChannelMsgs) {
+          // all messages in the  databasein for the current channel , send to function to be outputted 
+          let currentmessages = currentChannelMsg.message;
+        
+          outputMessage(currentChannelMsg);
+        }
+
+
+      }
+      
     }
   }
   
@@ -92,8 +116,8 @@ chatform.addEventListener("submit", (e) => {
   e.target.elements.msg.focus();
 });
 
-// output db message to dom
-function outputMessage(currentChannelMsg) {
+// output db message to dom- this 
+function outputMessagesForAdmin(currentChannelMsg) {
   const div = document.createElement("div");
   const msgTextdiv = document.createElement("div");
   const eachMessageDiv = document.createElement("div");
@@ -120,6 +144,35 @@ function outputMessage(currentChannelMsg) {
   document.querySelector(".chat-messages").appendChild(eachMessageDiv);
   // document.querySelector(".chat-messages").appendChild(msgTextdiv);
   }
+}
+// output db message to dom
+function outputMessage(currentChannelMsg) {
+  const div = document.createElement("div");
+  const msgTextdiv = document.createElement("div");
+  const eachMessageDiv = document.createElement("div");
+  div.classList.add("userPic");
+  msgTextdiv.classList.add("messageBlock");
+  eachMessageDiv.classList.add("eachMessageDiv");
+
+  // console.log(currentChannelMsg);
+
+  // if(!currentChannelMsg.user){
+  // `<p class="msgText"> ${currentChannelMsg.message}</p> `
+
+  // }else{
+    
+  div.innerHTML = `<img class="avatar" src="../uploads/${currentChannelMsg.user.profilePic}"></img>`;
+    
+  msgTextdiv.innerHTML = `<p class="msgUser ">  ${currentChannelMsg.user.name}  <span class= "msgDate">${currentChannelMsg.timestamp} </span></p>
+
+    <p class="msgText"> ${currentChannelMsg.message}</p>
+    `;
+
+    eachMessageDiv.append(div)
+    eachMessageDiv.append(msgTextdiv)
+    document.querySelector(".chat-messages").appendChild(eachMessageDiv);
+  // document.querySelector(".chat-messages").appendChild(msgTextdiv);
+  // }
 }
 
 

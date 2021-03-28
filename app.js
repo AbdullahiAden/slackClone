@@ -349,7 +349,7 @@ io.on("connection", (socket) => {
     // saving userId to object with socket ID
 
     SocketUsers[socket.id] = data.userId;
-    console.log(SocketUsers[socket.id]);
+    // console.log(SocketUsers[socket.id]);
 
     if(!SocketUsers.includes(SocketUsers[socket.id])){
       
