@@ -226,10 +226,8 @@ app.get("/channels/:id/delete", ensureAuthenticated, async (req,res)=>{
 app.get("/dm/:id", ensureAuthenticated,  async (req,res)=>{
   const {id} = req.params
   const loggedUser = req.user
-  // *check if there is any messages bewtween clicked user and logged in user( req.user)
+  //  find if there is doucment between clicked user and logged in user 
 
-  // $or: [{ userTo:id , "conversation.userFrom":loggedUser._id}, {userTo: loggedUser._id , "conversation.userFrom":id }]
-  // await Dmdb.find( {userTo:id , "conversation.userFrom":loggedUser._id})
   await Dmdb.find({$or: [{ userTo:id , "conversation.userFrom":loggedUser._id}, {userTo: loggedUser._id , "conversation.userFrom":id }] } )
   .populate("userTo ")
   .populate("conversation.userFrom ")
@@ -237,11 +235,8 @@ app.get("/dm/:id", ensureAuthenticated,  async (req,res)=>{
     if(err){
       console.log(err);
     }
-    
-    // console.log(popDm);
-
-    // *check if there is NO document of the clikced user and the logged in user 
-    // * check by if userTo === logged in user or userFrom === logged in user
+    // check if there is NO document of the clikced user and the logged in user , Then create if theres is no.. 
+    //  needs page reload to get the newly created document, then you can dm the clicked user
 
     // if the arr is emppty
     if( popDm.length<1){
@@ -255,19 +250,14 @@ app.get("/dm/:id", ensureAuthenticated,  async (req,res)=>{
         })
 
     }
-    // console.log(req.user._id + " reqUUUU");
-    // console.log(id + " reqPAR");
-
-        res.render("home", { dmUsers: popDm, reqUser: req.user , reqParams:id});
-
+      res.render("home", { dmUsers: popDm, reqUser: req.user , reqParams:id});
     
   });
   
 })
 
 
-// mentions - only for channels NOT DMS...
-
+// mentions 
 app.get("/mentions/:id", ensureAuthenticated, async (req, res)=>{
   const {id}= req.params
   // loop though db and get the messages of the logged in user

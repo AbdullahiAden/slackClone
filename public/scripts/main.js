@@ -51,28 +51,30 @@ socket.on("outputmsg", (allChannels) => {
       // * give the delete to also the messages user if he/she is logged in
       for (currentChannelMsg of currentChannelMsgs) {
         console.log(currentChannelMsg.user._id);
-        if (fullCurrentChannel.admin === userId ||currentChannelMsg.user._id===userId ) {
+        if (fullCurrentChannel.admin === userId ||currentChannelMsg.user._id===userId || currentChannelMsg.user._id === userId ) {
           // all messages in the  databasein for the current channel , send to function to be outputted
           let currentmessages = currentChannelMsg.message;
 
-          if (currentChannelMsg.user._id === userId) {
-            console.log("logged in users messages");
+          // if (currentChannelMsg.user._id === userId) {
+          //   console.log("logged in users messages");
 
-            console.log(currentChannelMsg.message);
-          }
+          //   console.log(currentChannelMsg.message);
+            // console.log(currentmessages);
+          
+          // }
 
-          // console.log(currentmessages);
           outputMessagesForAdmin(currentChannelMsg);
         }
 
         // if the logged in user IS NOT admin in that channel, he/ she will not get the delete functionality for the messages
-        else if (fullCurrentChannel.admin !== userId ||currentChannelMsg.user._id !==userId) {
-          for (currentChannelMsg of currentChannelMsgs) {
+        else {
+          // for (currentChannelMsg of currentChannelMsgs) {
             // all messages in the  databasein for the current channel , send to function to be outputted
             let currentmessages = currentChannelMsg.message;
 
             outputMessage(currentChannelMsg);
-          }
+          // }
+          
         }
       }
     }

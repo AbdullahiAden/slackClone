@@ -20,9 +20,10 @@
         <!-- * DM ----------------------------------- -->
 
         <% if (typeof dmUsers !='undefined' ) { %>
-          <div ><%#= console.log(dmUsers)%> </div>
 
           <%for (dmUser of dmUsers) {%>
+            <div ><%= console.log(dmUser.userTo.name)%> </div>
+            <div ><%= dmUser.userTo.name%> </div>
             <div class="dmUserFrom"> <%= reqUser._id%></div>
             <div id="dmId"><%= reqParams %></div>
           
