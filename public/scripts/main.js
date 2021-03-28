@@ -48,7 +48,7 @@ socket.on("outputmsg", (allChannels) => {
     if (channelId === channnelIds) {
       // if the logged in user IS admin or logged in user has messages in that channel, he/ she will get the delete functionality for the messages
       for (currentChannelMsg of currentChannelMsgs) {
-        console.log(currentChannelMsg.user._id);
+        console.log(currentChannelMsg);
         if (
           fullCurrentChannel.admin === userId ||
           currentChannelMsg.user._id === userId
