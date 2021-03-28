@@ -17,7 +17,7 @@
         <div id="channelId"><%= data[0]._id %></div>
         <% } %>
 
-        <!-- * DM ----------------------------------- -->
+        <!-- Direct messages (DM) ------------------------------------------------------------------------------------------>
 
         <% if (typeof dmUsers !='undefined' ) { %>
 
@@ -32,55 +32,46 @@
         <!--loop through the current dm channel and get the message to display --> 
           <div class="chat-messages">
             <%for (currentDm of  dmUser.conversation) {%>
+
               <div class="eachMessageDiv">
                 <!-- <div class="userPic"><img class="avatar" src="/uploads/<%#= currentDm.userFrom.profilePic %>" alt=""> </div> -->
 
                 <div class="messageBlock">
                   <p class="msgText"><%= currentDm.message%> </p>
                 </div>
-              
               </div>
-
              <% } %>
           </div>
         <% } %>
-
     </div>
 
 
- <!--  MENTIONS:  CAN SEE CURRENT LOGGED IN USERS'S tagged messages ------------------> 
+ <!--  MENTIONS:  CAN SEE CURRENT LOGGED IN USERS'S tagged messages --------------------------------------------------------------> 
       <div class="mentionsDiv">
         <% if (typeof mentions !='undefined' ) { %> 
-          
-          <!-- * getting each channels data  -->
-
           <% for(channels of mentions){ %>
 
           <% for(channelsConv of channels.conversation ){ %>
-
            <%  let msgStr = channelsConv.message %> 
             <% if(msgStr.includes("@" + reqUser.name )){ %> 
               
-            <div class="mentionsChannels"> <img class="avatar" src="/uploads/<%=channelsConv.user.profilePic  %> " alt=""> <%=channelsConv.user.name  %>  mentioned you in  <%=channels.channelName  %> 
+            <div class="mentionsChannels"> <img class="avatar" src="/uploads/<%=channelsConv.user.profilePic  %> " alt="">
+              <%=channelsConv.user.name  %>  mentioned you in  <%=channels.channelName  %> 
+
               <div><%= channelsConv.message %> </div>
-            
             </div>
-            
             <%}  %> 
-
           <% } %> 
-
           <% } %> 
         <% } %>
       </div>
 
       <div class="chat-messages">
-        <!-- * new messages will appear fro channels   -->
+        <!-- * new messages will appear for channels   -->
       </div>
 
 
       <div class="messagefield">
-        
         <form id="form">
           <input name="newMessage" id="msg" autocomplete="off" />
           <button id="submit-msg">send</button>

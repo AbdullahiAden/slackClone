@@ -3,9 +3,7 @@ const app = express();
 const path = require("path");
 const http = require("http");
 const socketio = require("socket.io");
-
 const mongoose = require("mongoose");
-
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const flash = require("connect-flash");
@@ -21,10 +19,9 @@ const Dmdb = require("./models/dm");
 const fileUpload = require("express-fileupload");
 
 //create  uploads folder
-app.use(fileUpload({createParentPath: true,}));
+app.use(fileUpload({ createParentPath: true }));
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 
 const { ensureAuthenticated } = require("./config/auth");
 
@@ -66,7 +63,7 @@ app.use(passport.session());
 // connect Flash
 app.use(flash());
 
-// global veriable . diff colors for diff msges
+// global veriable . diff colors for diff error messages
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash("success_msg");
   res.locals.error_msg = req.flash("error_msg");
@@ -75,11 +72,9 @@ app.use((req, res, next) => {
 });
 
 // ------ ROUTES -----------------------------------------------------------
-
 // signup
 app.get("/", async (req, res) => {
   res.render("signup");
-  
 });
 
 // handle signup
@@ -142,38 +137,38 @@ app.post("/user/login", (req, res, next) => {
 });
 
 // Logout
-
-app.get('/user/logout', (req, res) => {
+app.get("/user/logout", (req, res) => {
   req.logout();
-  req.flash('success_msg', 'You are logged out')
-  res.redirect('/user/login');
+  req.flash("success_msg", "You are logged out");
+  res.redirect("/user/login");
 });
 
 app.get("/channels", ensureAuthenticated, async (req, res) => {
   // console.log(req.user);
-  let ALL= await channeldb.find({}, (err, data) => {
-    if (channeldb) {
-      Usersdb.find({}, (err, allUsers) => {
-        if (Usersdb) {
-          res.render("home", { data, user: req.user, allUsers: allUsers });
-        } else {
-          res.render("home", { data, user: req.user });
-        }
-      });
-    } else {
-      console.log(err);
-    }
-  }).populate("user");
- 
+  let ALL = await channeldb
+    .find({}, (err, data) => {
+      if (channeldb) {
+        Usersdb.find({}, (err, allUsers) => {
+          if (Usersdb) {
+            res.render("home", { data, user: req.user, allUsers: allUsers });
+          } else {
+            res.render("home", { data, user: req.user });
+          }
+        });
+      } else {
+        console.log(err);
+      }
+    })
+    .populate("user");
 });
 
 // handle channnel creation
-app.post("/channels/new", ensureAuthenticated , (req, res) => {
+app.post("/channels/new", ensureAuthenticated, (req, res) => {
   const channelName = req.body.channelInput;
-
-  const newChannel = channeldb({ channelName:channelName , admin:req.user._id });
-
-  console.log(newChannel);
+  const newChannel = channeldb({
+    channelName: channelName,
+    admin: req.user._id,
+  });
   // if there is channel written
   if (channelName) {
     newChannel.save();
@@ -182,117 +177,113 @@ app.post("/channels/new", ensureAuthenticated , (req, res) => {
 });
 
 // get the conversation of specific channel
-app.get("/channels/:id",ensureAuthenticated , async (req, res) => {
+app.get("/channels/:id", ensureAuthenticated, async (req, res) => {
   const { id } = req.params;
 
-   await channeldb.find({ _id: id })
-  .populate("conversation.user")
-  .exec((err, poppedChannel)=>{
-    if(err){
-      console.log(err);
-    }
-    // console.log(poppedChannel);
-    res.render("home", { data: poppedChannel, user: req.user });
-    
-  });
-   
+  await channeldb
+    .find({ _id: id })
+    .populate("conversation.user")
+    .exec((err, poppedChannel) => {
+      if (err) {
+        console.log(err);
+      }
+      // console.log(poppedChannel);
+      res.render("home", { data: poppedChannel, user: req.user });
+    });
 });
 
-// delete messages
-app.get("/channels/:id/delete", ensureAuthenticated, async (req,res)=>{
-  // message id 
-  const {id}= req.params
-  
-    // find the _id in coversation arr that matches the clicked one and pull it  
-    // *check if the user that is deleting (logged in ) matches the message' s  user
-    // * or if it is admin, then delete
+// delete messages in channels
+app.get("/channels/:id/delete", ensureAuthenticated, async (req, res) => {
+  // message id
+  const { id } = req.params;
 
-    
-    await channeldb.updateOne(
-    { "conversation._id": id  },
-    {$pull: {conversation: {_id: id }}} )
-    .then((err, messageObj)=>{
-    if(err){
-      console.log(err);
-    }
-    // redirect back to the page the request came from. 
-    res.redirect("back")
-  });
+  // find the message ( _id ) in coversation array that matches the clicked one and pull it
+  await channeldb
+    .updateOne(
+      { "conversation._id": id },
+      { $pull: { conversation: { _id: id } } }
+    )
+    .then((err, messageObj) => {
+      if (err) {
+        console.log(err);
+      }
+      // redirect back to the page the request came from.
+      res.redirect("back");
+    });
+});
 
-})
+// Direct Messages - OBS - needs page reload, after creating dm channels
+app.get("/dm/:id", ensureAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  const loggedUser = req.user;
+  //  find if there is doucment between user that was clicked on and logged in user
+  await Dmdb.find({
+    $or: [
+      { userTo: id, "conversation.userFrom": loggedUser._id },
+      { userTo: loggedUser._id, "conversation.userFrom": id },
+    ],
+  })
+    .populate("userTo ")
+    .populate("conversation.userFrom ")
+    .exec((err, popDm) => {
+      if (err) {
+        console.log(err);
+      }
+      // Then create if theres is no document / channel for dm ..
+      //  needs page reload to get the newly created document, then you can dm the clicked user
 
-// *DMS
+      // if the arr is emppty
+      if (popDm.length < 1) {
+        const newDm =  new Dmdb({
+          userTo: id,
+          conversation: [{ userFrom: loggedUser }],
+        });
 
-app.get("/dm/:id", ensureAuthenticated,  async (req,res)=>{
-  const {id} = req.params
-  const loggedUser = req.user
-  //  find if there is doucment between clicked user and logged in user 
-
-  await Dmdb.find({$or: [{ userTo:id , "conversation.userFrom":loggedUser._id}, {userTo: loggedUser._id , "conversation.userFrom":id }] } )
-  .populate("userTo ")
-  .populate("conversation.userFrom ")
-  .exec((err, popDm)=>{
-    if(err){
-      console.log(err);
-    }
-    // check if there is NO document of the clikced user and the logged in user , Then create if theres is no.. 
-    //  needs page reload to get the newly created document, then you can dm the clicked user
-
-    // if the arr is emppty
-    if( popDm.length<1){
-      const newDm = new Dmdb({userTo: id,conversation: [{userFrom: loggedUser}] })
-
-      newDm.save().then(dm=>{
+        newDm
+          .save()
+          .then((dm) => {
             console.log(dm);
-        })
-        .catch(err=>{
+          })
+          .catch((err) => {
             console.log(err);
-        })
+          });
+      }
+      res.render("home", { dmUsers: popDm, reqUser: req.user, reqParams: id });
+    });
+});
 
-    }
-      res.render("home", { dmUsers: popDm, reqUser: req.user , reqParams:id});
-    
-  });
-  
-})
+// mentions
+app.get("/mentions/:id", ensureAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  // mentions from channels
+  await channeldb
+    .find({ "conversation.user": id })
+    .populate("conversation.user")
+    .exec((err, userMentions) => {
+      if (err) {
+        console.log(err);
+      }
 
-
-// mentions 
-app.get("/mentions/:id", ensureAuthenticated, async (req, res)=>{
-  const {id}= req.params
-  // loop though db and get the messages of the logged in user
-
-  // mentions from channels 
-  await channeldb.find({"conversation.user":id})
-  .populate('conversation.user')
-  .exec((err, userMentions)=>{
-    if(err){
-      console.log(err);
-    }
-
-   
-    res.render("home", {mentions:userMentions, reqUser: req.user , reqParams:id} );
-    
-  });
-
-  // * dms 
-
-})
+      res.render("home", {
+        mentions: userMentions,
+        reqUser: req.user,
+        reqParams: id,
+      });
+    });
+});
 //serves json
 app.get("/api/channels", async (req, res) => {
-  await channeldb.find({})
-  .populate('conversation.user')
-  .exec((err, poppedUser)=>{
-    if(err){
-      console.log(err);
-    }
-    console.log(poppedUser[0].conversation);
-    res.json(poppedUser);
-    
-  });
-  
+  await channeldb
+    .find({})
+    .populate("conversation.user")
+    .exec((err, poppedUser) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(poppedUser[0].conversation);
+      res.json(poppedUser);
+    });
 });
-
 
 // upload profile pic
 app.get("/profile/upload", ensureAuthenticated, (req, res) => {
@@ -326,44 +317,33 @@ app.post("/profile/upload", async (req, res) => {
   }
 });
 
-
-
-
 // .................... SOCKETS  ........................
 // Channels Sockets ......
-const SocketUsers = []
+const SocketUsers = [];
 io.on("connection", (socket) => {
-
-  socket.on('login', function(data){
-    console.log('a user ' + data.userId + ' connected');
-    // saving userId to object with socket ID
-
+  socket.on("login", function (data) {
+    console.log("a user " + data.userId + " connected");
+    // saving userId to array with socket ID
     SocketUsers[socket.id] = data.userId;
-    // console.log(SocketUsers[socket.id]);
+    if (!SocketUsers.includes(SocketUsers[socket.id])) {
+      SocketUsers.push(SocketUsers[socket.id]);
 
-    if(!SocketUsers.includes(SocketUsers[socket.id])){
-      
-      SocketUsers.push(SocketUsers[socket.id]) 
-     
-    socket.emit("onlineUsers",SocketUsers )
+      socket.emit("onlineUsers", SocketUsers);
+    } else {
+      socket.emit("onlineUsers", SocketUsers);
     }
-    else
-    {
-      socket.emit("onlineUsers",SocketUsers )
-    }
-    
-    
   });
 
   // find all channels from db and send to frontend, there will checked
-  channeldb.find()
-  .populate("conversation.user")
-  .exec((err,allChannels) => {
-    if(err){
-      console.log(err);
-    }
-    socket.emit("outputmsg", allChannels);
-  });
+  channeldb
+    .find()
+    .populate("conversation.user")
+    .exec((err, allChannels) => {
+      if (err) {
+        console.log(err);
+      }
+      socket.emit("outputmsg", allChannels);
+    });
 
   // send your message to everyone except you -- listen for chatMessage that is sent from client
   // save message to db before emitting to  the browser
@@ -373,85 +353,79 @@ io.on("connection", (socket) => {
     // trim to remove space from the string
     let trimmedUserId = user.trim();
     // take whatever the user types and save it the db
-    await channeldb.updateOne({ _id: channel },{ $push: { conversation: [{ message: message, user: trimmedUserId }] } })
-    .populate("conversation.user")
-      .exec((err,poppedMessage )=>{
-        if(err){
+    await channeldb
+      .updateOne(
+        { _id: channel },
+        { $push: { conversation: [{ message: message, user: trimmedUserId }] } }
+      )
+      .populate("conversation.user")
+      .exec((err, poppedMessage) => {
+        if (err) {
           console.log(err);
         }
-        // ********************************************* NEED TO BE FIXED WITH NEEDING TO RELOAD TO GET THE USER WHO SENT IT 
+        // NEED TO BE FIXED WITH NEEDING TO RELOAD TO GET THE USER WHO SENT IT
         // emit to user after saving
-        io.emit("message",msg );
-      })
-    
+        io.emit("message", msg);
+      });
   });
 
   // when user disconnects
   socket.on("disconnect", () => {
-    console.log('user ' + SocketUsers + ' disconnected');
+    console.log("user " + SocketUsers + " disconnected");
 
-      if(SocketUsers.includes(SocketUsers[socket.id])){
-        console.log( SocketUsers[socket.id]);
-        
-          delete SocketUsers[socket.id];
-      }
-    
+    if (SocketUsers.includes(SocketUsers[socket.id])) {
+      console.log(SocketUsers[socket.id]);
+
+      delete SocketUsers[socket.id];
+    }
   });
 });
-
-
 
 // DM SOCKETS .........
 io.on("connection", (socket) => {
 
-  // socket.on('login', function(data){
-  //   console.log('a user ' + data.userId + ' connected');
-  //   // saving userId to object with socket ID
-  //   SocketUsers[socket.id] = data.userId;
-  // });
-
   Dmdb.find()
-  .populate("userTo")
-  .exec((err,dmMessages) => {
-    if(err){
-      console.log(err);
-    }
-    socket.emit("outputDmMsg", dmMessages);
-  });
+    .populate("userTo")
+    .exec((err, dmMessages) => {
+      if (err) {
+        console.log(err);
+      }
+      socket.emit("outputDmMsg", dmMessages);
+    });
 
-  // * DM SOCKET 
+  // * DM SOCKET
   socket.on("dmMessage", async (msg) => {
     // * save message to db before emitting to  the browser
     // receive an object from client, the channel name and the message that will be sent to to the database
     let { userTo, userFrom, message } = msg;
-  
+
     // take whatever the user types and save it the db
     // both users in the dm can push in to their dm channels with $or
-    await Dmdb.updateOne({$or: [ { userTo : userTo , "conversation.userFrom": userFrom },  { userTo:userFrom , "conversation.userFrom":userTo}] },{ $push: { conversation: [{ message: message , userFrom:userFrom}] } })
-    .populate("userTo")
-      .exec((err,poppedDmMessage )=>{
-        if(err){
+    await Dmdb.updateOne(
+      {
+        $or: [
+          { userTo: userTo, "conversation.userFrom": userFrom },
+          { userTo: userFrom, "conversation.userFrom": userTo },
+        ],
+      },
+      { $push: { conversation: [{ message: message, userFrom: userFrom }] } }
+    )
+      .populate("userTo")
+      .exec((err, poppedDmMessage) => {
+        if (err) {
           console.log(err);
         }
         // emit to user after saving
         console.log(msg);
         io.emit("dmMessage", msg);
-      })
-
+      });
   });
 
   // when user disconnects
   socket.on("disconnect", () => {
-    // console.log('user ' + SocketUsers[socket.id] + ' disconnected');
-    // remove saved socket from users object
-    // delete SocketUsers[socket.id];
-    // console.log("disconnect ");
+    
     io.emit("message", " a user disconnected........");
   });
-
 });
-
-
-
 
 server.listen(3001);
