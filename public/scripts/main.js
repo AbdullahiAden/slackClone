@@ -6,8 +6,8 @@ let channelId = document.getElementById("channelId").textContent;
 
 let userId = document.getElementById("userId").textContent;
 
-let loggedInUserProfilePic = document.querySelector(".loggedInUserProfilePic")
-  .src;
+let loggedInUserProfilePic = document.querySelector(".loggedInUserProfilePic").src;
+  
 
 let userName = document.getElementById("userName").textContent;
 
@@ -34,58 +34,43 @@ function renderOnlineUsers(onlineUsers) {
   document.querySelector(".onlineUsers").appendChild(onlineUsersDiv);
 }
 
-//  fetched messages........
+//  fetched channels from db........
 socket.on("outputmsg", (allChannels) => {
-  // all channels with its data in channels collection
-  console.log(allChannels);
-  //  loop through the channels in our db, match channelId from messagefields header(which is hidden)
-  // get the appropriate channel and its messages and output to the dom
+  //  loop through the channels in our db, match channelId from messagefields header(which is hidden),
   for (let currentChannel in allChannels) {
     let channnelIds = allChannels[currentChannel]._id;
     let fullCurrentChannel = allChannels[currentChannel];
+
     // console.log(fullCurrentChannel );
     let currentChannelMsgs = allChannels[currentChannel].conversation;
 
+    // get the current channel' s messages and output to the dom
     if (channelId === channnelIds) {
-      // if the logged in user IS admin in that channel, he/ she will get the delete functionality for the messages
-      // * give the delete to also the messages user if he/she is logged in
+      // if the logged in user IS admin or logged in user has messages in that channel, he/ she will get the delete functionality for the messages
       for (currentChannelMsg of currentChannelMsgs) {
         console.log(currentChannelMsg.user._id);
-        if (fullCurrentChannel.admin === userId ||currentChannelMsg.user._id===userId || currentChannelMsg.user._id === userId ) {
-          // all messages in the  databasein for the current channel , send to function to be outputted
-          let currentmessages = currentChannelMsg.message;
-
-          // if (currentChannelMsg.user._id === userId) {
-          //   console.log("logged in users messages");
-
-          //   console.log(currentChannelMsg.message);
-            // console.log(currentmessages);
-          
-          // }
-
+        if (
+          fullCurrentChannel.admin === userId ||
+          currentChannelMsg.user._id === userId
+        ) {
+          // all messages in the  databasein for the current channel , send to function to be outputted to dom
           outputMessagesForAdmin(currentChannelMsg);
         }
 
-        // if the logged in user IS NOT admin in that channel, he/ she will not get the delete functionality for the messages
+        // if the logged in user IS NOT admin, nor have messages in that channel, he/ she will not get the delete functionality for the messages
         else {
-          // for (currentChannelMsg of currentChannelMsgs) {
-            // all messages in the  databasein for the current channel , send to function to be outputted
-            let currentmessages = currentChannelMsg.message;
-
-            outputMessage(currentChannelMsg);
-          // }
-          
+          outputMessage(currentChannelMsg);
         }
       }
     }
   }
 });
 
-// message from server
+// messages from server
 socket.on("message", (message) => {
   console.log(message);
 
-  // * call func on this message to add typed message to to dom , BUT CANNOT GET THE LOGGED IN USES PROFILE PIC AND NAME, gets only after reload
+  // call func on this message to add typed message to to dom , BUT GIVES THE NECCESARY INFO (USERS NAME, PROFILE, AND MESSAGE DELETION) AFTER PAGE RELOAD
   outputMessage(message);
 });
 
@@ -108,7 +93,7 @@ chatform.addEventListener("submit", (e) => {
   e.target.elements.msg.focus();
 });
 
-// output db message to dom- this
+// output messages for admin & users own messages  with message deletion functionality
 function outputMessagesForAdmin(currentChannelMsg) {
   const div = document.createElement("div");
   const msgTextdiv = document.createElement("div");
@@ -135,7 +120,7 @@ function outputMessagesForAdmin(currentChannelMsg) {
     // document.querySelector(".chat-messages").appendChild(msgTextdiv);
   }
 }
-// output db message to dom
+// non admin 
 function outputMessage(currentChannelMsg) {
   const div = document.createElement("div");
   const msgTextdiv = document.createElement("div");
@@ -143,13 +128,6 @@ function outputMessage(currentChannelMsg) {
   div.classList.add("userPic");
   msgTextdiv.classList.add("messageBlock");
   eachMessageDiv.classList.add("eachMessageDiv");
-
-  // console.log(currentChannelMsg);
-
-  // if(!currentChannelMsg.user){
-  // `<p class="msgText"> ${currentChannelMsg.message}</p> `
-
-  // }else{
 
   div.innerHTML = `<img class="avatar" src="../uploads/${currentChannelMsg.user.profilePic}"></img>`;
 
@@ -161,6 +139,4 @@ function outputMessage(currentChannelMsg) {
   eachMessageDiv.append(div);
   eachMessageDiv.append(msgTextdiv);
   document.querySelector(".chat-messages").appendChild(eachMessageDiv);
-  // document.querySelector(".chat-messages").appendChild(msgTextdiv);
-  // }
 }
